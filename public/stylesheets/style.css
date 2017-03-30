@@ -1,0 +1,54 @@
+body {
+	font-family: Arial, Helvetica, sans-serif;
+}
+b { font-weight: normal; }
+h3 {
+   color: blue;
+}
+li { list-style: none; }
+label {
+   color: #3d5c8b;
+   width: 156px;
+   height: 0px;
+   text-align: center;
+   display: inline-block;
+}
+.ui-autocomplete-category {
+   font-weight: bold;
+   padding: .2em .4em;
+   margin: .8em 0 .2em;
+   line-height: 1.5;
+}
+.search-form {
+   margin-bottom: 7px;
+   text-align: center;
+   width: 150px;
+   margin-right: 1px;
+}
+input[value="Submit"] {
+   width: 80px;
+   margin-top: 5px;
+}
+.dates {
+   width: 145px;
+   height: 15px;
+}
+.dateLabel {
+   display: inline-block;
+   height: 20px;
+   font-size: small;
+   vertical-align: 0px;
+   width: 105px;
+   margin-right: -25px;
+   margin-left: -10px;
+}
+.destMatch { color: blue; }
+.hidden {
+   display: none;
+}
+.show {
+   width: 250px;
+   color: #3d5c8b;
+   text-align: right;
+   margin-bottom: -35px;
+}

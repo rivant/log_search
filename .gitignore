@@ -1,0 +1,16 @@
+# Ignore all logfiles and tempfiles.
+/log/*
+!/log/.keep
+/tmp
+
+# Ignore OSX files
+.DS_Store
+
+# Ignore https://github.com/bkeepers/dotenv files
+.env.development
+.env.test
+.env.production
+.env
+
+# Ignore debug files
+.jshintrc

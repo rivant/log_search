@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>UAT Server</title>
+  <title>Find Correlating Messages</title>
+  <link rel="stylesheet" href="stylesheets/jquery-ui.css">
+  <link rel="stylesheet" href="stylesheets/style.css">
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <script>
+  $( function() {
+    $.widget( "custom.catcomplete", $.ui.autocomplete, {
+      _create: function() {
+        this._super();
+        this.widget().menu( "option", "items", "> :not(.ui-autocomplete-category)" );
+      },
+      _renderMenu: function( ul, items ) {
+        var that = this,
+          currentCategory = "";
+        $.each( items, function( index, item ) {
+          var li;
+          if ( item.category != currentCategory ) {
+            ul.append( "<li class='ui-autocomplete-category'>" + item.category + "</li>" );
+            currentCategory = item.category;
+          }
+          li = that._renderItemData( ul, item );
+          if ( item.category ) {
+            li.attr( "aria-label", item.category + " : " + item.label );
+          }
+        });
+      }
+    });
+    var sources = [
+      { label: "anders", category: "SOURCE" },
+      { label: "antal", category: "SOURCE" },
+      { label: "annhhx10", category: "BKMEM08" },
+      { label: "annttop C13", category: "BKMEM08" },
+      { label: "MSF07ADT", category: "BKMHB07" },
+      { label: "andreas johnson", category: "BKMHB07" }
+    ];
+    var destinations = [
+      { label: "anders", category: "DEST" },
+      { label: "antal", category: "DEST" },
+      { label: "CSV99MIX", category: "CHW99" },
+      { label: "annttop C13", category: "CHW99" },
+      { label: "anders andersson", category: "BAY10" },
+      { label: "andreas johnson", category: "BAY10" }
+    ];
+ 
+    $( "#source" ).catcomplete({
+      delay: 0,
+      source: sources
+    });
+    $( "#dest" ).catcomplete({
+      delay: 0,
+      source: destinations
+    });
+  } );
+  </script>
+</head>
+
+<body>
+   <h2>UAT Server</h2>
+   <h3>Find Correlating Messages in Logs</h3>
+   <br/>
+ 
+   <label for="src">Source Adapter</label>
+   <label for="dest">Destination Adapter</label>
+   <label for="ref">Search For</label><br/>
+   <form method="post" action="/">
+      <input id="source" class="search-form" name="Source" maxLength="20" value="<%= content.params.Source %>" style="<%= content.borderSource %>" />
+      <input id="dest" class="search-form" name="Dest" maxLength="20" value="<%= content.params.Dest %>" />
+      <input class="search-form" name="Pattern" maxLength="30" value="<%= content.params.Pattern %>" style="<%= content.borderPattern %>" />
+      <br/>
+      <label class="dateLabel">Start Date</label>
+         <input class="dates search" type="date" id="startDate" name="Start" value="<%= content.params.Start || util.today() %>" />
+      <label class="dateLabel">End Date</label>
+         <input class="dates search" type="date" id="endDate" name="End" value="<%= content.params.End || util.today() %>" />
+      <br/><br/>
+      <input type="submit" value="Submit" /></form><br/>
+      <br/>
+   </form><br/>
+
+   <div class=<%= content.totalDisplay %>>
+      <span>Total Source Matches: </span><span id="srcCount"><%= content.srcTotal %></span><br/>
+      <span>Total Destination Correlations: </span><span id="dstCount"><%= content.dstTotal %></span>
+   </div>
+   
+   <pre style="<%= content.msgDisplay %>">
+
+</body>
+</html>
