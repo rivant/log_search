@@ -1,63 +1,61 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>UAT Server</title>
-  <title>Find Correlating Messages</title>
-  <link rel="stylesheet" href="stylesheets/jquery-ui.css">
-  <link rel="stylesheet" href="stylesheets/style.css">
-  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-  <script>
-  $( function() {
-    $.widget( "custom.catcomplete", $.ui.autocomplete, {
-      _create: function() {
-        this._super();
-        this.widget().menu( "option", "items", "> :not(.ui-autocomplete-category)" );
-      },
-      _renderMenu: function( ul, items ) {
-        var that = this,
-          currentCategory = "";
-        $.each( items, function( index, item ) {
-          var li;
-          if ( item.category != currentCategory ) {
-            ul.append( "<li class='ui-autocomplete-category'>" + item.category + "</li>" );
-            currentCategory = item.category;
-          }
-          li = that._renderItemData( ul, item );
-          if ( item.category ) {
-            li.attr( "aria-label", item.category + " : " + item.label );
-          }
-        });
-      }
-    });
-    var sources = [
-      { label: "anders", category: "SOURCE" },
-      { label: "antal", category: "SOURCE" },
-      { label: "annhhx10", category: "BKMEM08" },
-      { label: "annttop C13", category: "BKMEM08" },
-      { label: "MSF07ADT", category: "BKMHB07" },
-      { label: "andreas johnson", category: "BKMHB07" }
-    ];
-    var destinations = [
-      { label: "anders", category: "DEST" },
-      { label: "antal", category: "DEST" },
-      { label: "CSV99MIX", category: "CHW99" },
-      { label: "annttop C13", category: "CHW99" },
-      { label: "anders andersson", category: "BAY10" },
-      { label: "andreas johnson", category: "BAY10" }
-    ];
- 
-    $( "#source" ).catcomplete({
-      delay: 0,
-      source: sources
-    });
-    $( "#dest" ).catcomplete({
-      delay: 0,
-      source: destinations
-    });
-  } );
-  </script>
+   <meta charset="utf-8">
+   <title>UAT Server</title>
+   <title>Find Correlating Messages</title>
+   <link rel="stylesheet" href="stylesheets/jquery-ui.css">
+   <link rel="stylesheet" href="stylesheets/style.css">
+   <script src="javascripts/jquery-3.2.1.min.js"></script>
+   <script src="javascripts/jquery-ui-1.12.1.js"></script>
+   <script>
+      var adapter = /[A-Z0-9]*_.*SOURCE/, region = /REGION\/([A-Z0-9]*)\//, source = [];
+      var srcStr = "<%= script.regionSrcList() %>";
+      var srcArr = srcStr.split(',');
+      srcArr.forEach( (val, idx) => {
+         if (region.test(val) && adapter.test(val)){
+            source[idx] = { label: adapter.exec(val)[0], category: region.exec(val)[1] };
+         }
+      });
+   </script>
+   <script>
+   $( function() {
+     $.widget( "custom.catcomplete", $.ui.autocomplete, {
+       _create: function() {
+         this._super();
+         this.widget().menu( "option", "items", "> :not(.ui-autocomplete-category)" );
+       },
+       _renderMenu: function( ul, items ) {
+         var that = this,
+           currentCategory = "";
+         $.each( items, function( index, item ) {
+           var li;
+           if ( item.category != currentCategory ) {
+             ul.append( "<li class='ui-autocomplete-category'>" + item.category + "</li>" );
+             currentCategory = item.category;
+           }
+           li = that._renderItemData( ul, item );
+           if ( item.category ) {
+             li.attr( "aria-label", item.category + " : " + item.label );
+           }
+         });
+       }
+     });
+      var sources = [
+         { label: "anders", category: "SOURCE" },
+         { label: "antal", category: "SOURCE" },
+         { label: "annhhx10", category: "BKMEM08" },
+         { label: "annttop C13", category: "BKMEM08" },
+         { label: "MSF07ADT", category: "BKMHB07" },
+         { label: "andreas johnson", category: "BKMHB07" }
+      ];
+
+      $( "#source" ).catcomplete({
+         delay: 0,
+         source: source
+      });
+   } );
+   </script>
 </head>
 
 <body>

@@ -10,7 +10,8 @@ var index = require('./routes/index'),
     users = require('./routes/users'),
     util = require('./lib/utils'),
     content = require('./lib/content'),
-    search = require('./lib/search');
+    search = require('./lib/search'),
+    script = require('./lib/scripts');
 
 
 // view engine setup
@@ -25,6 +26,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Templates
+app.locals.script = script;
 app.locals.content = content;
 app.locals.util = util;
 
