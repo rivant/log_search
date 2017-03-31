@@ -9,12 +9,20 @@
    <script src="javascripts/jquery-3.2.1.min.js"></script>
    <script src="javascripts/jquery-ui-1.12.1.js"></script>
    <script>
-      var adapter = /[A-Z0-9]*_.*SOURCE/, region = /REGION\/([A-Z0-9]*)\//, source = [];
+      var srcAdapter = /[A-Z0-9]*_.*SOURCE/, region = /REGION\/([A-Z0-9]*)\//, dstAdapter = /[A-Z0-9]*_.*DEST/;
+      var sources = [], destinations = [];
       var srcStr = "<%= script.regionSrcList() %>";
+      var dstStr = "<%= script.regionDstList() %>";
       var srcArr = srcStr.split(',');
+      var dstArr = dstStr.split(',');
       srcArr.forEach( (val, idx) => {
-         if (region.test(val) && adapter.test(val)){
-            source[idx] = { label: adapter.exec(val)[0], category: region.exec(val)[1] };
+         if (region.test(val) && srcAdapter.test(val)){
+            sources[idx] = { label: srcAdapter.exec(val)[0], category: region.exec(val)[1] };
+         }
+      });
+      dstArr.forEach( (val, idx) => {
+         if (region.test(val) && dstAdapter.test(val)){
+            destinations[idx] = { label: dstAdapter.exec(val)[0], category: region.exec(val)[1] };
          }
       });
    </script>
@@ -41,18 +49,14 @@
          });
        }
      });
-      var sources = [
-         { label: "anders", category: "SOURCE" },
-         { label: "antal", category: "SOURCE" },
-         { label: "annhhx10", category: "BKMEM08" },
-         { label: "annttop C13", category: "BKMEM08" },
-         { label: "MSF07ADT", category: "BKMHB07" },
-         { label: "andreas johnson", category: "BKMHB07" }
-      ];
 
       $( "#source" ).catcomplete({
          delay: 0,
-         source: source
+         source: sources
+      });
+      $( "#dest" ).catcomplete({
+         delay: 0,
+         source: destinations
       });
    } );
    </script>
