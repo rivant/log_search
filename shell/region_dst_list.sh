@@ -12,4 +12,4 @@ if [[ $SYS = 'phxs' || $SYS = 'phxp' ]]; then
 fi
 
 # Get region and dests
-eval $SDA find $ADAPTER_HOME/REGION -type f | grep -e "DEST.log$"
+eval $SDA find $ADAPTER_HOME/REGION -type f | grep -e "DEST.log$" | tr '\n' ','

@@ -12,4 +12,4 @@ if [[ $SYS = 'phxs' || $SYS = 'phxp' ]]; then
 fi
 
 # Get region and source logs
-eval $SDA find ~/REGION -type f | grep -e "SOURCE.log$"
+eval $SDA find ~/REGION -type f | grep -e "SOURCE.log$" | tr '\n' ','

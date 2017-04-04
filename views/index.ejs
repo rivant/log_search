@@ -11,18 +11,16 @@
    <script>
       var srcAdapter = /[A-Z0-9]*_.*SOURCE/, region = /REGION\/([A-Z0-9]*)\//, dstAdapter = /[A-Z0-9]*_.*DEST/;
       var sources = [], destinations = [];
-      var srcStr = "<%= script.regionSrcList() %>";
-      var dstStr = "<%= script.regionDstList() %>";
-      var srcArr = srcStr.split(',');
-      var dstArr = dstStr.split(',');
-      srcArr.forEach( (val, idx) => {
+      var srcArr = "<%= script.regionSrcList() %>".split(',');
+      var dstArr = "<%= script.regionDstList() %>".split(',');
+      srcArr.forEach( (val) => {
          if (region.test(val) && srcAdapter.test(val)){
-            sources[idx] = { label: srcAdapter.exec(val)[0], category: region.exec(val)[1] };
+            sources.push({ label: srcAdapter.exec(val)[0], category: region.exec(val)[1] });
          }
       });
-      dstArr.forEach( (val, idx) => {
+      dstArr.forEach( (val) => {
          if (region.test(val) && dstAdapter.test(val)){
-            destinations[idx] = { label: dstAdapter.exec(val)[0], category: region.exec(val)[1] };
+            destinations.push({ label: dstAdapter.exec(val)[0], category: region.exec(val)[1] });
          }
       });
    </script>
