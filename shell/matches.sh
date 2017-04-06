@@ -13,7 +13,6 @@ ADAPTER_HOME=~
 SYS=`uname -n | cut -c 1-4`
 SDA=""
 REGION_PATTERN='s/[[:alpha:]]*\([0-9]*\)[[:alnum:]]*/\1/'
-DELIM='DELIMITER '
 C2N="tr '[:cntrl:]' '[\\n*]'"
 
 # Server check to decide if sudo needed
@@ -38,9 +37,9 @@ else
    DEST_LOG="_DEST.log"
 fi
 
-# Match $SEARCH and date range, then return filename, message, and correlation ID
+# Find $SOURCE files in date range.  Return file name and line number of $SEARCH
 if [ `eval $SDA ls $SRC_PATH 2>/dev/null | wc -l` != 0 ]; then
-   SRC_MATCHES=`eval $SDA find $SRC_PATH -type f -mtime +$END_TIME ! -mtime +$START_TIME | grep "${SOURCE}_SOURCE.log" | sort -r | xargs $(eval $SDA) zgrep -e "[:alnum::blank:]*" /dev/null | sed "/${SEARCH}/,/ACKCODE/!d"`
+   SRC_MATCHES=`eval $SDA find $SRC_PATH -type f -mtime +$END_TIME ! -mtime +$START_TIME | grep "${SOURCE}_SOURCE.log" | sort -r | xargs $(eval $SDA) zgrep -n $SEARCH | cut -f1-2 -d:`
    if [[ -z $SRC_MATCHES ]]; then
       printf "Cannot find $SEARCH in $SOURCE Source Logs." 1>&2
       exit 1
@@ -51,32 +50,29 @@ else
 fi
 
 # Find dest files in date range and $DEST_PATH
-DEST_MATCHES=`$(eval $SDA) find $DEST_PATH -type f -mtime +$END_TIME ! -mtime +$START_TIME | grep $DEST_LOG | sort -r`
+DEST_DATE_MATCHES=`$(eval $SDA) find $DEST_PATH -type f -mtime +$END_TIME ! -mtime +$START_TIME | grep $DEST_LOG | sort -r`
 
-
-# Match Corel ID's to files
-if [ `eval $SDA ls $DEST_PATH 2>/dev/null | wc -l` != 0 ]; then
-   for ID in $COREL_IDS
+# Match sources to dests
+for SRC_ENTRY in $SRC_MATCHES
+do
+   SRC_LINE_NUM=`echo $SRC_ENTRY | cut -f2 -d:`
+   SRC_FILE_NAME=`echo $SRC_ENTRY | cut -f1 -d:`
+   SRC_MSG=`$(eval $SDA) zgrep -e "[:alnum::blank:]*" $SRC_FILE_NAME | sed "${SRC_LINE_NUM},/ACKCODE/!d"`
+   CORREL_ID=`echo $SRC_MSG | sed 's/.* COREL ID = \([A-Z0-9]*\) .*/\1/'`
+   for DEST_NAME in $DEST_DATE_MATCHES
    do
-      for FILE_NAME in $DEST_MATCHES
-      do
-         PARTIAL=`eval $SDA zgrep $ID $FILE_NAME /dev/null`
-         if [[ -n $PARTIAL ]]; then
-            if [[ -z `echo $PARTIAL | grep dummy` ]]; then
-               MATCH=`zgrep -e "[:alnum::blank:]*" $FILE_NAME /dev/null | sed "/$ID/,/MSH/!d"`
-               TOTAL=$TOTAL$MATCH$DELIM
-            else
-               TOTAL=$TOTAL$PARTIAL$DELIM
-            fi
+      DEST_PARTIAL=`eval $SDA zgrep $CORREL_ID $DEST_NAME`
+      if [[ -n $DEST_PARTIAL ]]; then
+         if [[ -z `echo $DEST_PARTIAL | grep dummy` ]]; then
+            DEST_MATCH=`$(eval $SDA) zgrep -e "[:alnum::blank:]*" $DEST_NAME | sed "/$CORREL_ID/,/MSH/!d"`
+            TOTAL=$TOTAL"$DEST_NAME \n $DEST_MATCH \n"
+         else
+            TOTAL=$TOTAL"\n $DEST_NAME \n $DEST_PARTIAL \n"
          fi
-      done
-      printf "$TOTAL"
-      TOTAL=''
+      fi
    done
-else
-   echo "Cannot find:  $DEST_PATH\n" 1>&2
-   exit 1
-fi
-
-
-# printf "$SRC_MATCHES"
+   TOTAL="$CORREL_ID \n $SRC_FILE_NAME \n $SRC_MSG \n $TOTAL \n DELIMITER \n"
+   printf "$TOTAL"
+   echo
+   TOTAL=''
+done
