@@ -67,12 +67,11 @@ do
             DEST_MATCH=`$(eval $SDA) zgrep -e "[:alnum::blank:]*" $DEST_NAME | sed "/$CORREL_ID/,/MSH/!d"`
             TOTAL=$TOTAL"$DEST_NAME \n $DEST_MATCH \n"
          else
-            TOTAL=$TOTAL"\n $DEST_NAME \n $DEST_PARTIAL \n"
+            TOTAL=$TOTAL"\n$DEST_NAME \n $DEST_PARTIAL \n"
          fi
       fi
    done
-   TOTAL="$CORREL_ID \n $SRC_FILE_NAME \n $SRC_MSG \n $TOTAL \n DELIMITER \n"
+   TOTAL="$CORREL_ID \n $SRC_FILE_NAME \n $SRC_MSG \n$TOTAL DELIMITER "
    printf "$TOTAL"
-   echo
    TOTAL=''
 done
