@@ -2,8 +2,7 @@
 <html lang="en">
 <head>
    <meta charset="utf-8">
-   <title>UAT Server</title>
-   <title>Find Correlating Messages</title>
+   <title>HL7 Message Search</title>
    <link rel="stylesheet" href="stylesheets/jquery-ui.css">
    <link rel="stylesheet" href="stylesheets/style.css">
    <script src="javascripts/jquery-3.2.1.min.js"></script>
@@ -61,14 +60,26 @@
 </head>
 
 <body>
-   <h2>UAT Server</h2>
-   <h3>Find Correlating Messages in Logs</h3>
-   <br/>
- 
-   <label for="src">Source Adapter</label>
-   <label for="dest">Destination Adapter</label>
-   <label for="ref">Search For</label><br/>
+   
+   <h2>Find Correlating Messages in Logs</h2>
    <form method="post" action="/">
+      <select id="server_select" name="Server">
+         <option value="UAT">UAT Server</option>
+         <option value="Stage4">Staging 4</option>
+         <option value="Stage5">Staging 5</option>
+         <option value="Stage6">Staging 6</option>
+      </select>
+      <div class="credentials">
+         <span class="cred_label">User ID</span>
+         <input class="cred_input" type="text" name="UserId" maxLength="30" />
+         <span class="cred_label">Password</span>
+         <input class="cred_input" type="password" name="Password" maxLength="40" />
+      </div>
+      <br/>
+ 
+      <label for="src">Source Adapter</label>
+      <label for="dest">Destination Adapter</label>
+      <label for="ref">Search For</label><br/>
       <input id="source" class="search-form" name="Source" maxLength="20" value="<%= content.params.Source %>" style="<%= content.borderSource %>" />
       <input id="dest" class="search-form" name="Dest" maxLength="20" value="<%= content.params.Dest %>" />
       <input class="search-form" name="Pattern" maxLength="30" value="<%= content.params.Pattern %>" style="<%= content.borderPattern %>" />
@@ -90,4 +101,15 @@
    <pre style="<%= content.msgDisplay %>">
 
 </body>
+<script>
+   $('#server_select').on('change', function(){
+      var serverCheck = $(this).val(),
+          cred = $('.credentials');
+      if (serverCheck !== 'UAT'){
+         cred.css('visibility', 'visible');
+      } else {
+         cred.css('visibility', 'hidden') 
+      }
+   });
+</script>
 </html>

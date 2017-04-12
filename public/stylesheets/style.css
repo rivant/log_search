@@ -1,9 +1,9 @@
 body {
-	font-family: Arial, Helvetica, sans-serif;
+   font-family: Arial, Helvetica, sans-serif;
 }
 b { font-weight: normal; }
-h3 {
-   color: blue;
+h2 {
+   color: #0e5b96;
 }
 li { list-style: none; }
 label {
@@ -31,7 +31,7 @@ input[value="Submit"] {
 }
 .dates {
    width: 145px;
-   height: 15px;
+   height: 18px;
 }
 .dateLabel {
    display: inline-block;
@@ -51,4 +51,28 @@ input[value="Submit"] {
    color: #3d5c8b;
    text-align: right;
    margin-bottom: -35px;
+}
+#server_select {
+   display: inline-block;
+   margin-right: 20px;
+   overflow: hidden;
+   text-overflow: ellipsis;
+   height: 25px;
+   width: 120px;
+   font-size: medium;
+   margin-bottom: 20px;
+}
+.credentials {
+   visibility: hidden;
+   display: inline;
+}
+.cred_label {
+   vertical-align: 0px;
+   width: 100px;
+}
+.cred_input {
+   height: 20px;
+   width: 140px;
+   font-size: medium;
+   margin-right: 20px;
 }
