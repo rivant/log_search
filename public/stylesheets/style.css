@@ -1,17 +1,14 @@
 body {
    font-family: Arial, Helvetica, sans-serif;
 }
-b { font-weight: normal; }
+b {
+   font-weight: normal;
+}
 h2 {
    color: #0e5b96;
 }
-li { list-style: none; }
-label {
-   color: #3d5c8b;
-   width: 156px;
-   height: 0px;
-   text-align: center;
-   display: inline-block;
+li {
+   list-style: none;
 }
 .ui-autocomplete-category {
    font-weight: bold;
@@ -25,54 +22,67 @@ label {
    width: 150px;
    margin-right: 1px;
 }
+input {
+   border-radius: 3px;
+   height: 20px;
+}
 input[value="Submit"] {
    width: 80px;
    margin-top: 5px;
 }
 .dates {
    width: 145px;
-   height: 18px;
+   height: 20px;
 }
 .dateLabel {
    display: inline-block;
-   height: 20px;
    font-size: small;
-   vertical-align: 0px;
+   vertical-align: -1px;
    width: 105px;
-   margin-right: -25px;
-   margin-left: -10px;
+   margin-right: -50px;
+   margin-left: -35px;
 }
-.destMatch { color: blue; }
-.hidden {
-   display: none;
+.destMatch {
+   color: blue;
 }
-.show {
+.totals {
    width: 250px;
    color: #3d5c8b;
    text-align: right;
    margin-bottom: -35px;
+}
+.labels {
+   color: #3d5c8b;
+   width: 156px;
+   height: 0px;
+   text-align: center;
+   display: inline-block;
 }
 #server_select {
    display: inline-block;
    margin-right: 20px;
    overflow: hidden;
    text-overflow: ellipsis;
+   text-align: center;
    height: 25px;
    width: 120px;
    font-size: medium;
    margin-bottom: 20px;
 }
-.credentials {
-   visibility: hidden;
-   display: inline;
+#credentials {
+   display: inline-block;
 }
 .cred_label {
-   vertical-align: 0px;
-   width: 100px;
+    margin-left: -50px;
+    margin-right: -7px;
 }
 .cred_input {
-   height: 20px;
    width: 140px;
    font-size: medium;
-   margin-right: 20px;
+   margin-right: 25px;
+   margin-left: -36px;
+   text-align: center;
+}
+#one_off {
+  margin-right: -15px; 
 }

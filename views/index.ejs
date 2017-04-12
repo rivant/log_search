@@ -8,10 +8,11 @@
    <script src="javascripts/jquery-3.2.1.min.js"></script>
    <script src="javascripts/jquery-ui-1.12.1.js"></script>
    <script>
-      var srcAdapter = /[A-Z0-9]*_.*SOURCE/, region = /REGION\/([A-Z0-9]*)\//, dstAdapter = /[A-Z0-9]*_.*DEST/;
-      var sources = [], destinations = [];
-      var srcArr = "<%= script.regionSrcList() %>".split(',');
-      var dstArr = "<%= script.regionDstList() %>".split(',');
+   $( function() {
+      var srcAdapter = /[A-Z0-9]*_.*SOURCE/, region = /REGION\/([A-Z0-9]*)\//, dstAdapter = /[A-Z0-9]*_.*DEST/,
+          sources = [], destinations = [],
+          srcArr = "<%= script.regionSrcList() %>".split(','),
+          dstArr = "<%= script.regionDstList() %>".split(',');
       srcArr.forEach( (val) => {
          if (region.test(val) && srcAdapter.test(val)){
             sources.push({ label: srcAdapter.exec(val)[0], category: region.exec(val)[1] });
@@ -22,9 +23,7 @@
             destinations.push({ label: dstAdapter.exec(val)[0], category: region.exec(val)[1] });
          }
       });
-   </script>
-   <script>
-   $( function() {
+
      $.widget( "custom.catcomplete", $.ui.autocomplete, {
        _create: function() {
          this._super();
@@ -65,35 +64,38 @@
    <form method="post" action="/">
       <select id="server_select" name="Server">
          <option value="UAT">UAT Server</option>
-         <option value="Stage4">Staging 4</option>
-         <option value="Stage5">Staging 5</option>
-         <option value="Stage6">Staging 6</option>
+         <option value="Stage1">Staging 1 (AZNEV)</option>
+         <option value="Stage2">Staging 2 (SACTO)</option>
+         <option value="Stage3">Staging 3 (BAY)</option>
+         <option value="Stage4">Staging 4 (LAWMIX)</option>
+         <option value="Stage5">Staging 5 (SOCAL)</option>
+         <option value="Stage6">Staging 6 (EHR)</option>
       </select>
-      <div class="credentials">
-         <span class="cred_label">User ID</span>
-         <input class="cred_input" type="text" name="UserId" maxLength="30" />
-         <span class="cred_label">Password</span>
-         <input class="cred_input" type="password" name="Password" maxLength="40" />
+      <div id="credentials" style="<%= content.credDisplay %>">
+         <span class="labels cred_label" id="one_off">User ID</span>
+         <input class="cred_input" type="text" name="UserId" maxLength="30" value="<%= content.params.UserId %>" style="<%= content.borderUserId %>" />
+         <span class="labels cred_label">Password</span>
+         <input class="cred_input" type="password" name="Password" maxLength="40" value="<%= content.params.Password %>" style="<%= content.borderPassword %>" />
       </div>
       <br/>
  
-      <label for="src">Source Adapter</label>
-      <label for="dest">Destination Adapter</label>
-      <label for="ref">Search For</label><br/>
+      <span class="labels">Source Adapter</span>
+      <span class="labels">Destination Adapter</span>
+      <span class="labels">Search For</span><br/>
       <input id="source" class="search-form" name="Source" maxLength="20" value="<%= content.params.Source %>" style="<%= content.borderSource %>" />
       <input id="dest" class="search-form" name="Dest" maxLength="20" value="<%= content.params.Dest %>" />
       <input class="search-form" name="Pattern" maxLength="30" value="<%= content.params.Pattern %>" style="<%= content.borderPattern %>" />
       <br/>
-      <label class="dateLabel">Start Date</label>
-         <input class="dates search" type="date" id="startDate" name="Start" value="<%= content.params.Start || util.today() %>" />
-      <label class="dateLabel">End Date</label>
-         <input class="dates search" type="date" id="endDate" name="End" value="<%= content.params.End || util.today() %>" />
+      <span class="dateLabel labels">Start Date</span>
+      <input class="dates search" type="date" id="startDate" name="Start" value="<%= content.params.Start || util.today() %>" />
+      <span class="dateLabel labels">End Date</span>
+      <input class="dates search" type="date" id="endDate" name="End" value="<%= content.params.End || util.today() %>" />
       <br/><br/>
       <input type="submit" value="Submit" /></form><br/>
       <br/>
    </form><br/>
 
-   <div class=<%= content.totalDisplay %>>
+   <div class="totals" style=<%= content.totalDisplay %>>
       <span>Total Source Matches: </span><span id="srcCount"><%= content.srcTotal %></span><br/>
       <span>Total Destination Correlations: </span><span id="dstCount"><%= content.dstTotal %></span>
    </div>
@@ -102,13 +104,13 @@
 
 </body>
 <script>
+   $('#server_select').val('<%= content.params.Server %>');
    $('#server_select').on('change', function(){
-      var serverCheck = $(this).val(),
-          cred = $('.credentials');
-      if (serverCheck !== 'UAT'){
-         cred.css('visibility', 'visible');
+      if ($(this).val() !== 'UAT'){
+         $('#credentials').css('visibility', 'visible');
+         $("input[name='UserId']").focus();
       } else {
-         cred.css('visibility', 'hidden') 
+         $('#credentials').css('visibility', 'hidden');
       }
    });
 </script>
