@@ -7,9 +7,9 @@ set Pattern [lindex $argv 4]
 set End_Time [lindex $argv 5]
 set Start_Time [lindex $argv 6]
 set Dest [lindex $argv 7]
-set Script ../shell/remote_matches.sh
+set Script ./remote_matches.sh
 
-spawn ksh -c "ssh -o StrictHostKeyChecking=no $ID@$IP ksh -s < $Script $Source $Pattern $End_Time $Start_Time $ID $PW $DEST"
+spawn ksh -c "ssh -o StrictHostKeyChecking=no $ID@$IP ksh -s < $Script $Source $Pattern $End_Time $Start_Time $PW $Dest"
 
 expect "eDir Password:"
 send "$PW\r"
