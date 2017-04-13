@@ -63,13 +63,13 @@
    <h2>Find Correlating Messages in Logs</h2>
    <form method="post" action="/">
       <select id="server_select" name="Server">
-         <option value="UAT">UAT Server</option>
-         <option value="Stage1">Staging 1 (AZNEV)</option>
-         <option value="Stage2">Staging 2 (SACTO)</option>
-         <option value="Stage3">Staging 3 (BAY)</option>
-         <option value="Stage4">Staging 4 (LAWMIX)</option>
-         <option value="Stage5">Staging 5 (SOCAL)</option>
-         <option value="Stage6">Staging 6 (EHR)</option>
+         <option value="10.248.202.25">UAT Server</option>
+         <option value="10.248.205.20">Staging 1 (AZNEV)</option>
+         <option value="10.248.204.20">Staging 2 (SACTO)</option>
+         <option value="10.248.203.20">Staging 3 (BAY)</option>
+         <option value="10.248.206.20">Staging 4 (LAWMIX)</option>
+         <option value="10.248.207.20">Staging 5 (SOCAL)</option>
+         <option value="10.248.208.20">Staging 6 (EHR)</option>
       </select>
       <div id="credentials" style="<%= content.credDisplay %>">
          <span class="labels cred_label" id="one_off">User ID</span>
@@ -106,7 +106,7 @@
 <script>
    $('#server_select').val('<%= content.params.Server %>');
    $('#server_select').on('change', function(){
-      if ($(this).val() !== 'UAT'){
+      if ($(this).val() !== '10.248.202.25'){
          $('#credentials').css('visibility', 'visible');
          $("input[name='UserId']").focus();
       } else {

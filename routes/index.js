@@ -1,7 +1,7 @@
 var express = require('express'),
     router = express.Router(),
     params = {
-       title: 'UAT Server'
+       title: 'Server'
     };
 
 /* GET home page. */
