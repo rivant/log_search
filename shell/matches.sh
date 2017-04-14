@@ -71,7 +71,7 @@ do
          fi
       fi
    done
-   TOTAL="$CORREL_ID\n$SRC_FILE_NAME\n$SRC_MSG \n$TOTAL DELIMITER "
+   TOTAL="  $CORREL_ID\n$SRC_FILE_NAME\n$SRC_MSG \n$TOTAL DELIMITER "
    printf "$TOTAL"
    TOTAL=''
 done
