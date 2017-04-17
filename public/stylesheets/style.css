@@ -59,6 +59,7 @@ input[value="Submit"] {
    display: inline-block;
 }
 #server_select {
+   border-radius: 3px;
    display: inline-block;
    margin-right: 20px;
    overflow: hidden;

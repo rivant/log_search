@@ -56,9 +56,20 @@ app.use(function(err, req, res, next) {
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+  // render the error
+  loginError(err.message, res);
 });
+
+function loginError(msg, res){
+   if (msg.includes('EACCES')){
+      content.msgDisplay = 'color:red';
+      content.msg= 'Invalid User ID or Password';
+      res.render('index', content);
+      content.reset();
+   } else {
+      res.status(err.status || 500);
+      res.render('error');
+   }
+};
 
 module.exports = app;
