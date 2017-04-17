@@ -37,7 +37,7 @@ input[value="Submit"] {
 .dateLabel {
    display: inline-block;
    font-size: small;
-   vertical-align: -1px;
+   vertical-align: middle;
    width: 105px;
    margin-right: -50px;
    margin-left: -35px;
@@ -54,7 +54,6 @@ input[value="Submit"] {
 .labels {
    color: #3d5c8b;
    width: 156px;
-   height: 0px;
    text-align: center;
    display: inline-block;
 }
