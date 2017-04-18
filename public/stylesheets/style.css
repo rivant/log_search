@@ -38,9 +38,9 @@ input[value="Submit"] {
    display: inline-block;
    font-size: small;
    vertical-align: middle;
-   width: 105px;
-   margin-right: -50px;
-   margin-left: -35px;
+   width: 60px;
+   margin-left: 12px;
+   text-align: right;
 }
 .destMatch {
    color: blue;
@@ -60,12 +60,12 @@ input[value="Submit"] {
 #server_select {
    border-radius: 3px;
    display: inline-block;
-   margin-right: 20px;
+   margin-right: 17px;
    overflow: hidden;
    text-overflow: ellipsis;
    text-align: center;
    height: 25px;
-   width: 120px;
+   width: 150px;
    font-size: medium;
    margin-bottom: 20px;
 }
@@ -73,16 +73,15 @@ input[value="Submit"] {
    display: inline-block;
 }
 .cred_label {
-    margin-left: -50px;
-    margin-right: -7px;
+    text-align: right;
+    width: 70px;
 }
 .cred_input {
    width: 140px;
    font-size: medium;
-   margin-right: 25px;
-   margin-left: -36px;
    text-align: center;
+   margin-right: 12px;
 }
 #one_off {
-  margin-right: -15px; 
+  margin-left: -23; 
 }

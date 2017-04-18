@@ -57,7 +57,9 @@ app.use(function(err, req, res, next) {
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
   // render the error
-  loginError(err.message, res);
+   if (err){
+      loginError(err.message, res);
+   }
 });
 
 function loginError(msg, res){
@@ -67,7 +69,7 @@ function loginError(msg, res){
       res.render('index', content);
       content.reset();
    } else {
-      res.status(err.status || 500);
+      res.status(msg.status || 500);
       res.render('error');
    }
 };

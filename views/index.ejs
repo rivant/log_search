@@ -86,9 +86,9 @@
       <input id="dest" class="search-form" name="Dest" maxLength="20" value="<%= content.params.Dest %>" />
       <input class="search-form" name="Pattern" maxLength="30" value="<%= content.params.Pattern %>" style="<%= content.borderPattern %>" />
       <br/>
-      <span class="dateLabel labels">Start Date</span>
+      <span class="dateLabel">Start Date</span>
       <input class="dates search" type="date" id="startDate" name="Start" value="<%= content.params.Start || util.today() %>" />
-      <span class="dateLabel labels">End Date</span>
+      <span class="dateLabel">End Date</span>
       <input class="dates search" type="date" id="endDate" name="End" value="<%= content.params.End || util.today() %>" />
       <br/><br/>
       <input type="submit" value="Submit" /></form><br/>
