@@ -9,7 +9,7 @@ START_TIME=$4
 DEST=$5
 
 # Common variables
-ADAPTER_HOME=~
+ADAPTER_HOME=`printenv HOME|cut -d'/' -f1-3`
 REGION_PATTERN='s/[[:alpha:]]*\([0-9]*\)[[:alnum:]]*/\1/'
 C2N="tr '[:cntrl:]' '[\\n*]'"
 
@@ -31,7 +31,7 @@ fi
 
 # Find $SOURCE files in date range.  Return file name and line number of $SEARCH
 if [ `ls $SRC_PATH 2>/dev/null | wc -l` != 0 ]; then
-   SRC_MATCHES=`find $SRC_PATH -type f -mtime +$END_TIME ! -mtime +$START_TIME | grep "${SOURCE}_SOURCE.log" | sort -r | xargs $(eval $SDA) zgrep -n $SEARCH | cut -f1-2 -d:`
+   SRC_MATCHES=`find $SRC_PATH -type f -mtime +$END_TIME ! -mtime +$START_TIME | grep "${SOURCE}_SOURCE.log" | sort -r | xargs zgrep -n $SEARCH /dev/null| cut -f1-2 -d:`
    if [[ -z $SRC_MATCHES ]]; then
       printf "Cannot find $SEARCH in $SOURCE Source Logs." 1>&2
       exit 1
