@@ -31,7 +31,7 @@ fi
 
 # Find $SOURCE files in date range.  Return file name and line number of $SEARCH
 if [ `ls $SRC_PATH 2>/dev/null | wc -l` != 0 ]; then
-   SRC_MATCHES=`find $SRC_PATH -type f -mtime +$END_TIME ! -mtime +$START_TIME | grep "${SOURCE}_SOURCE.log" | sort -r | xargs zgrep -n $SEARCH /dev/null| cut -f1-2 -d:`
+   SRC_MATCHES=`find $SRC_PATH -type f -mtime +$END_TIME ! -mtime +START_TIME | grep "${SOURCE}_SOURCE.log" | sort -r | xargs zgrep -n $SEARCH /dev/null| cut -f1-2 -d:`
    if [[ -z $SRC_MATCHES ]]; then
       printf "Cannot find $SEARCH in $SOURCE Source Logs." 1>&2
       exit 1
@@ -42,7 +42,7 @@ else
 fi
 
 # Find dest files in date range and $DEST_PATH
-DEST_DATE_MATCHES=`find $DEST_PATH -type f -mtime +$END_TIME ! -mtime +$START_TIME | grep $DEST_LOG | sort -r`
+DEST_DATE_MATCHES=`find $DEST_PATH -type f -mtime +END_TIME ! -mtime +START_TIME | grep $DEST_LOG | sort -r`
 
 # Match sources to dests
 for SRC_ENTRY in $SRC_MATCHES
