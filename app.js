@@ -13,7 +13,6 @@ var index = require('./routes/index'),
     search = require('./lib/search'),
     script = require('./lib/scripts');
 
-
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -23,6 +22,12 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(function(req, res, next){
+   res.setHeader("Cache-Control", "no-store, no-store, must-revalidate");
+   res.setHeader("Pragma", "no-cache");
+   res.setHeader("Expires", 0);
+   return next();
+});
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Templates

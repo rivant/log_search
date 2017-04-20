@@ -16,8 +16,6 @@ export SUDO_ASKPASS=~/.sudopass
 
 # Common variables
 ADAPTER_HOME=`sudo -Au \#800 printenv HOME | cut -d'/' -f1-3`
-SHELL=`sudo -Au \#800 printenv SHELL`
-SYS=`uname -n | cut -c 1-4`
 REGION_PATTERN='s/[[:alpha:]]*\([0-9]*\)[[:alnum:]]*/\1/'
 
 # Search point for sources
@@ -29,10 +27,10 @@ SRC_PATH="${ADAPTER_HOME}/REGION/$SRC_REGION_NAME/LOG"
 if [[ -n $DEST ]]; then
    DEST_REGION_NUM=`echo $DEST | sed $REGION_PATTERN`
    DEST_REGION_NAME=`sudo -Au \#800 ls $ADAPTER_HOME/REGION | grep -E "[A-Z]$DEST_REGION_NUM"`
-   DEST_PATH="$ADAPTER_HOME/REGION/$DEST_REGION_NAME/LOG"
+   DEST_PATH="${ADAPTER_HOME}/REGION/$DEST_REGION_NAME/LOG"
    DEST_LOG="${DEST}_DEST.log"
 else
-   DEST_PATH="$ADAPTER_HOME/REGION"
+   DEST_PATH="${ADAPTER_HOME}/REGION"
    DEST_LOG="_DEST.log"
 fi
 
@@ -66,12 +64,11 @@ do
             DEST_MATCH=`sudo -Au \#800 zgrep -e "[:alnum::blank:]*" $DEST_NAME | sed "/$CORREL_ID/,/MSH/!d"`
             TOTAL=$TOTAL"$DEST_NAME \n $DEST_MATCH \n"
          else
-            TOTAL=$TOTAL"\n$DEST_NAME \n $DEST_PARTIAL \n"
+            TOTAL=$TOTAL"$DEST_NAME \n $DEST_PARTIAL \n"
          fi
       fi
    done
-   TOTAL="  $CORREL_ID\n$SRC_FILE_NAME\n$SRC_MSG \n$TOTAL DELIMITER "
-   printf "$TOTAL"
+   echo "$CORREL_ID\n$SRC_FILE_NAME\n$SRC_MSG\n$TOTAL\nDELIMITER"
    TOTAL=''
 done
 rm ~/.sudopass

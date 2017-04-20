@@ -71,6 +71,7 @@ input[value="Submit"] {
 }
 #credentials {
    display: inline-block;
+   margin-left: -20px;
 }
 .cred_label {
     text-align: right;
@@ -81,7 +82,4 @@ input[value="Submit"] {
    font-size: medium;
    text-align: center;
    margin-right: 12px;
-}
-#one_off {
-  margin-left: -23; 
 }
