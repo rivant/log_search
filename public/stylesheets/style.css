@@ -28,7 +28,7 @@ input {
 }
 input[value="Submit"] {
    width: 80px;
-   margin-top: 5px;
+   margin-top: 7px;
 }
 .dates {
    width: 145px;
