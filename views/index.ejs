@@ -2,17 +2,17 @@
 <html lang="en">
 <head>
    <meta charset="utf-8">
-   <title>UAT Server</title>
-   <title>Find Correlating Messages</title>
+   <title>HL7 Message Search</title>
    <link rel="stylesheet" href="stylesheets/jquery-ui.css">
    <link rel="stylesheet" href="stylesheets/style.css">
    <script src="javascripts/jquery-3.2.1.min.js"></script>
    <script src="javascripts/jquery-ui-1.12.1.js"></script>
    <script>
-      var srcAdapter = /[A-Z0-9]*_.*SOURCE/, region = /REGION\/([A-Z0-9]*)\//, dstAdapter = /[A-Z0-9]*_.*DEST/;
-      var sources = [], destinations = [];
-      var srcArr = "<%= script.regionSrcList() %>".split(',');
-      var dstArr = "<%= script.regionDstList() %>".split(',');
+   $( function() {
+      var srcAdapter = /[A-Z0-9]*_.*SOURCE/, region = /REGION\/([A-Z0-9]*)\//, dstAdapter = /[A-Z0-9]*_.*DEST/,
+          sources = [], destinations = [],
+          srcArr = "<%= script.regionSrcList() %>".split(','),
+          dstArr = "<%= script.regionDstList() %>".split(',');
       srcArr.forEach( (val) => {
          if (region.test(val) && srcAdapter.test(val)){
             sources.push({ label: srcAdapter.exec(val)[0], category: region.exec(val)[1] });
@@ -23,9 +23,7 @@
             destinations.push({ label: dstAdapter.exec(val)[0], category: region.exec(val)[1] });
          }
       });
-   </script>
-   <script>
-   $( function() {
+
      $.widget( "custom.catcomplete", $.ui.autocomplete, {
        _create: function() {
          this._super();
@@ -61,33 +59,58 @@
 </head>
 
 <body>
-   <h2>UAT Server</h2>
-   <h3>Find Correlating Messages in Logs</h3>
-   <br/>
- 
-   <label for="src">Source Adapter</label>
-   <label for="dest">Destination Adapter</label>
-   <label for="ref">Search For</label><br/>
+   <h2>Find Correlating Messages in Logs</h2>
    <form method="post" action="/">
+      <select id="server_select" name="Server">
+         <option value="10.248.202.25">UAT Server</option>
+         <option value="10.248.205.20">Staging 1 (AZNEV)</option>
+         <option value="10.248.204.20">Staging 2 (SACTO)</option>
+         <option value="10.248.203.20">Staging 3 (BAY)</option>
+         <option value="10.248.206.20">Staging 4 (LAWMIX)</option>
+         <option value="10.248.207.20">Staging 5 (SOCAL)</option>
+         <option value="10.248.208.20">Staging 6 (EHR)</option>
+      </select>
+      <div id="credentials" style="<%= content.credDisplay %>">
+         <span class="labels cred_label" id="one_off">User ID</span>
+         <input class="cred_input" type="text" name="UserId" maxLength="30" value="<%= content.params.UserId %>" style="<%= content.borderUserId %>" />
+         <span class="labels cred_label">Password</span>
+         <input class="cred_input" type="password" name="Password" maxLength="40" value="<%= content.params.Password %>" style="<%= content.borderPassword %>" />
+      </div>
+      <br/>
+ 
+      <span class="labels">Source Adapter</span>
+      <span class="labels">Destination Adapter</span>
+      <span class="labels">Search For</span><br/>
       <input id="source" class="search-form" name="Source" maxLength="20" value="<%= content.params.Source %>" style="<%= content.borderSource %>" />
       <input id="dest" class="search-form" name="Dest" maxLength="20" value="<%= content.params.Dest %>" />
       <input class="search-form" name="Pattern" maxLength="30" value="<%= content.params.Pattern %>" style="<%= content.borderPattern %>" />
       <br/>
-      <label class="dateLabel">Start Date</label>
-         <input class="dates search" type="date" id="startDate" name="Start" value="<%= content.params.Start || util.today() %>" />
-      <label class="dateLabel">End Date</label>
-         <input class="dates search" type="date" id="endDate" name="End" value="<%= content.params.End || util.today() %>" />
+      <span class="dateLabel">Start Date</span>
+      <input class="dates search" type="date" id="startDate" name="Start" value="<%= content.params.Start || util.today() %>" />
+      <span class="dateLabel">End Date</span>
+      <input class="dates search" type="date" id="endDate" name="End" value="<%= content.params.End || util.today() %>" />
       <br/><br/>
       <input type="submit" value="Submit" /></form><br/>
       <br/>
    </form><br/>
 
-   <div class=<%= content.totalDisplay %>>
+   <div class="totals" style=<%= content.totalDisplay %>>
       <span>Total Source Matches: </span><span id="srcCount"><%= content.srcTotal %></span><br/>
       <span>Total Destination Correlations: </span><span id="dstCount"><%= content.dstTotal %></span>
    </div>
    
-   <pre style="<%= content.msgDisplay %>">
+   <pre style="<%= content.msgDisplay %>"><%= content.msg %>
 
 </body>
+<script>
+   $('#server_select').val('<%= content.params.Server %>');
+   $('#server_select').on('change', function(){
+      if ($(this).val() !== '10.248.202.25'){
+         $('#credentials').css('visibility', 'visible');
+         $("input[name='UserId']").focus();
+      } else {
+         $('#credentials').css('visibility', 'hidden');
+      }
+   });
+</script>
 </html>

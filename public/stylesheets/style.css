@@ -1,17 +1,14 @@
 body {
-	font-family: Arial, Helvetica, sans-serif;
+   font-family: Arial, Helvetica, sans-serif;
 }
-b { font-weight: normal; }
-h3 {
-   color: blue;
+b {
+   font-weight: normal;
 }
-li { list-style: none; }
-label {
-   color: #3d5c8b;
-   width: 156px;
-   height: 0px;
-   text-align: center;
-   display: inline-block;
+h2 {
+   color: #0e5b96;
+}
+li {
+   list-style: none;
 }
 .ui-autocomplete-category {
    font-weight: bold;
@@ -25,30 +22,64 @@ label {
    width: 150px;
    margin-right: 1px;
 }
+input {
+   border-radius: 3px;
+   height: 20px;
+}
 input[value="Submit"] {
    width: 80px;
-   margin-top: 5px;
+   margin-top: 7px;
 }
 .dates {
    width: 145px;
-   height: 15px;
+   height: 20px;
 }
 .dateLabel {
    display: inline-block;
-   height: 20px;
    font-size: small;
-   vertical-align: 0px;
-   width: 105px;
-   margin-right: -25px;
-   margin-left: -10px;
+   vertical-align: middle;
+   width: 60px;
+   margin-left: 12px;
+   text-align: right;
 }
-.destMatch { color: blue; }
-.hidden {
-   display: none;
+.destMatch {
+   color: blue;
 }
-.show {
+.totals {
    width: 250px;
    color: #3d5c8b;
    text-align: right;
    margin-bottom: -35px;
+}
+.labels {
+   color: #3d5c8b;
+   width: 156px;
+   text-align: center;
+   display: inline-block;
+}
+#server_select {
+   border-radius: 3px;
+   display: inline-block;
+   margin-right: 17px;
+   overflow: hidden;
+   text-overflow: ellipsis;
+   text-align: center;
+   height: 25px;
+   width: 150px;
+   font-size: medium;
+   margin-bottom: 20px;
+}
+#credentials {
+   display: inline-block;
+   margin-left: -20px;
+}
+.cred_label {
+    text-align: right;
+    width: 70px;
+}
+.cred_input {
+   width: 140px;
+   font-size: medium;
+   text-align: center;
+   margin-right: 12px;
 }
