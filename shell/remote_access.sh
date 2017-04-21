@@ -8,6 +8,7 @@ set End_Time [lindex $argv 5]
 set Start_Time [lindex $argv 6]
 set Dest [lindex $argv 7]
 set Script shell/remote_matches.sh
+set timeout 60
 
 spawn -noecho ksh -c "ssh -o StrictHostKeyChecking=no $ID@$IP ksh -s < $Script $Source $Pattern $End_Time $Start_Time $PW $Dest"
 
