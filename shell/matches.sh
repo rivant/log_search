@@ -59,7 +59,7 @@ do
             DEST_MATCH=`zgrep -e "[:alnum::blank:]*" $DEST_NAME | sed "/$CORREL_ID/,/MSH/!d"`
             TOTAL=$TOTAL"$DEST_NAME \n $DEST_MATCH \n"
          else
-            TOTAL=$TOTAL"\n$DEST_NAME \n $DEST_PARTIAL \n"
+            TOTAL=$TOTAL"\n$DEST_NAME \n $DEST_PARTIAL\r\n"
          fi
       fi
    done
