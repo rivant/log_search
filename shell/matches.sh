@@ -31,7 +31,7 @@ fi
 
 # Find $SOURCE files in date range.  Return file name and line number of $SEARCH
 if [ `ls $SRC_PATH 2>/dev/null | wc -l` != 0 ]; then
-   SRC_MATCHES=`find $SRC_PATH -type f -mtime +$END_TIME ! -mtime +$START_TIME | grep "${SOURCE}_SOURCE.log" | sort -r | xargs zgrep -n $SEARCH /dev/null| cut -f1-2 -d:`
+   SRC_MATCHES=`find $SRC_PATH -type f -mtime +$END_TIME ! -mtime +$START_TIME | grep "${SOURCE}_SOURCE.log" | sort -r | xargs zgrep -n $SEARCH /dev/null | cut -d: -f1-2`
    if [[ -z $SRC_MATCHES ]]; then
       printf "Cannot find $SEARCH in $SOURCE Source Logs." 1>&2
       exit 1
@@ -50,6 +50,9 @@ do
    SRC_LINE_NUM=`echo $SRC_ENTRY | cut -d: -f2`
    SRC_FILE_NAME=`echo $SRC_ENTRY | cut -f1 -d:`
    SRC_MSG=`zgrep -e "[:alnum::blank:]*" $SRC_FILE_NAME | sed "${SRC_LINE_NUM},/ACKCODE/!d"`
+   if [[ -n `echo $SRC_MSG | grep "MSA|"` ]]; then
+      continue
+   fi
    CORREL_ID=`echo $SRC_MSG | sed 's/.* COREL ID = \([A-Z0-9]*\) .*/\1/'`
    for DEST_NAME in $DEST_DATE_MATCHES
    do

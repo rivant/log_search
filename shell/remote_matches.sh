@@ -55,6 +55,9 @@ do
    SRC_LINE_NUM=`echo $SRC_ENTRY | cut -f2 -d:`
    SRC_FILE_NAME=`echo $SRC_ENTRY | cut -f1 -d:`
    SRC_MSG=`sudo -Au \#800 zgrep -e "[:alnum::blank:]*" $SRC_FILE_NAME | sed "${SRC_LINE_NUM},/ACKCODE/!d"`
+   if [[ -n `echo $SRC_MSG | grep "MSA|"` ]]; then
+      continue
+   fi
    CORREL_ID=`echo $SRC_MSG | sed 's/.* COREL ID = \([A-Z0-9]*\) .*/\1/'`
    for DEST_NAME in $DEST_DATE_MATCHES
    do
