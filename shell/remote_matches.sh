@@ -54,7 +54,7 @@ for SRC_ENTRY in $SRC_MATCHES
 do
    SRC_LINE_NUM=`echo $SRC_ENTRY | cut -f2 -d:`
    SRC_FILE_NAME=`echo $SRC_ENTRY | cut -f1 -d:`
-   SRC_MSG=`sudo -Au \#800 zgrep -e "[:alnum::blank:]*" $SRC_FILE_NAME | sed "${SRC_LINE_NUM},/ACKCODE/!d"`
+   SRC_MSG=`sudo -Au \#800 zgrep "[[:alnum:]]*" $SRC_FILE_NAME | sed "${SRC_LINE_NUM},/ACKCODE/!d"`
    if [[ -n `echo $SRC_MSG | grep "MSA|"` ]]; then
       continue
    fi
@@ -64,7 +64,7 @@ do
       DEST_PARTIAL=`sudo -Au \#800 zgrep $CORREL_ID $DEST_NAME`
       if [[ -n $DEST_PARTIAL ]]; then
          if [[ -z `echo $DEST_PARTIAL | grep dummy` ]]; then
-            DEST_MATCH=`sudo -Au \#800 zgrep -e "[:alnum::blank:]*" $DEST_NAME | sed "/$CORREL_ID/,/MSH/!d"`
+            DEST_MATCH=`sudo -Au \#800 zgrep "[[:alnum:]]*" $DEST_NAME | sed "/$CORREL_ID/,/MSH/!d"`
             TOTAL=$TOTAL"$DEST_NAME \n $DEST_MATCH \n"
          else
             TOTAL=$TOTAL"$DEST_NAME \n $DEST_PARTIAL \n"
