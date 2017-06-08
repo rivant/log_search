@@ -44,6 +44,14 @@ app.get('/', function(req, res){
    res.render('index', content);
 });
 
+// /files/* is accessed via req.params[0]
+// but here we name it :file
+app.get('/:file(*)', function(req, res, next){
+  var file = req.params.file,
+      path = __dirname + '/files/' + file;
+  res.download(path);
+});
+
 app.post('/', function(req, res){
    search.form(req, res);
 });

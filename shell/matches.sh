@@ -13,6 +13,9 @@ ADAPTER_HOME=`printenv HOME|cut -d'/' -f1-3`
 REGION_PATTERN='s/[[:alpha:]]*\([0-9]*\)[[:alnum:]]*/\1/'
 C2N="tr '[:cntrl:]' '[\\n*]'"
 
+# Download cleanup
+find files -type f -mtime +1 | xargs rm
+
 # Search point for sources
 SRC_REGION_NUM=`echo $SOURCE | sed $REGION_PATTERN`
 SRC_REGION_NAME=`ls $ADAPTER_HOME/REGION | grep -E "[A-Z]$SRC_REGION_NUM"`
@@ -49,6 +52,11 @@ for SRC_ENTRY in $SRC_MATCHES
 do
    SRC_LINE_NUM=`echo $SRC_ENTRY | cut -d: -f2`
    SRC_FILE_NAME=`echo $SRC_ENTRY | cut -f1 -d:`
+
+   # Make file available for download
+   SRC_NAME_ONLY=`echo $SRC_FILE_NAME | rev | cut -d/ -f1 | rev | sed 's/.gz//g'`
+   zgrep -e "[:alnum::blank:]*" $SRC_FILE_NAME > files/$SRC_NAME_ONLY
+
    SRC_MSG=`zgrep -e "[:alnum::blank:]*" $SRC_FILE_NAME | sed "${SRC_LINE_NUM},/ACKCODE/!d"`
    if [[ -n `echo $SRC_MSG | grep "MSA|"` ]]; then
       continue
@@ -66,7 +74,7 @@ do
          fi
       fi
    done
-   TOTAL="$CORREL_ID\n$SRC_FILE_NAME\n$SRC_MSG\n$TOTAL DELIMITER"
+   TOTAL="$CORREL_ID\n${SRC_PATH}/${SRC_NAME_ONLY}\n$SRC_MSG\n$TOTAL DELIMITER"
    echo "$TOTAL"
    TOTAL=''
 done
