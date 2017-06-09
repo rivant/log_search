@@ -72,6 +72,10 @@ do
          else
             TOTAL=$TOTAL"\n$DEST_NAME \n $DEST_PARTIAL\r\n"
          fi
+
+         # Make file available for download
+         DST_NAME_ONLY=`echo $DEST_NAME | rev | cut -d/ -f1 | rev | sed 's/.gz//g'`
+         zgrep -e "[:alnum::blank:]*" $DEST_NAME > files/$DST_NAME_ONLY
       fi
    done
    TOTAL="$CORREL_ID\n${SRC_PATH}/${SRC_NAME_ONLY}\n$SRC_MSG\n$TOTAL DELIMITER"
