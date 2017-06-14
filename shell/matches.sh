@@ -14,7 +14,7 @@ REGION_PATTERN='s/[[:alpha:]]*\([0-9]*\)[[:alnum:]]*/\1/'
 C2N="tr '[:cntrl:]' '[\\n*]'"
 
 # Download cleanup
-find files -type f -mtime +1 | xargs rm
+find files -type f -mmin +240 | xargs rm
 
 # Search point for sources
 SRC_REGION_NUM=`echo $SOURCE | sed $REGION_PATTERN`

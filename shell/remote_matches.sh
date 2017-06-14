@@ -13,7 +13,7 @@ DEST=$6
 echo "#!/bin/sh\necho $PW" > ~/.sudopass
 chmod 700 ~/.sudopass
 export SUDO_ASKPASS=~/.sudopass
-mkdir ~/transfer_temp
+mkdir -p ~/transfer_temp
 
 # Common variables
 ADAPTER_HOME=`sudo -Au \#800 printenv HOME | cut -d'/' -f1-3`
@@ -58,7 +58,7 @@ do
 	
 	# Make file available for download
    SRC_NAME_ONLY=`echo $SRC_FILE_NAME | rev | cut -d/ -f1 | rev | sed 's/.gz//g'`
-   sudo -Au \#800 zgrep -e "[:alnum::blank:]*" $SRC_FILE_NAME > ~/transfer_temp/$SRC_NAME_ONLY	
+   sudo -Au \#800 zgrep -e "[[:alnum:]]*" $SRC_FILE_NAME > ~/transfer_temp/$SRC_NAME_ONLY	
 	
    SRC_MSG=`sudo -Au \#800 zgrep "[[:alnum:]]*" $SRC_FILE_NAME | sed "${SRC_LINE_NUM},/ACKCODE/!d"`
    if [[ -n `echo $SRC_MSG | grep "MSA|"` ]]; then
@@ -78,11 +78,11 @@ do
 			
 			# Make file available for download
          DEST_NAME_ONLY=`echo $DEST_NAME | rev | cut -d/ -f1 | rev | sed 's/.gz//g'`
-         zgrep -e "[:alnum::blank:]*" $DEST_NAME > ~/transfer_temp/$DEST_NAME_ONLY
+         sudo -Au \#800 zgrep -e "[[:alnum:]]*" $DEST_NAME > ~/transfer_temp/$DEST_NAME_ONLY
       fi
    done
    echo "$CORREL_ID\n${SRC_PATH}/${SRC_NAME_ONLY}\n$SRC_MSG\n$TOTAL\nDELIMITER"
 	TOTAL=''
 done
 rm ~/.sudopass
-rm -rf ~/transfer_temp
+sleep 3; rm -rf ~/transfer_temp
