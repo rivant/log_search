@@ -62,21 +62,33 @@ do
       continue
    fi
    CORREL_ID=`echo $SRC_MSG | sed 's/.* COREL ID = \([A-Z0-9]*\) .*/\1/'`
+
    for DEST_NAME in $DEST_DATE_MATCHES
    do
-      DEST_PARTIAL=`zgrep $CORREL_ID $DEST_NAME`
-      if [[ -n $DEST_PARTIAL ]]; then
-         if [[ -z `echo $DEST_PARTIAL | grep dummy` ]]; then
-            DEST_MATCH=`zgrep -e "[:alnum::blank:]*" $DEST_NAME | sed "/$CORREL_ID/,/MSH/!d"`
-            TOTAL=$TOTAL"$DEST_NAME \n $DEST_MATCH \n"
-         else
-            TOTAL=$TOTAL"\n$DEST_NAME \n $DEST_PARTIAL\r\n"
-         fi
+      # Check for matching correlation Id's
+      ID_DEST_MATCHES_ARR=(`zgrep -n "Id $CORREL_ID" $DEST_NAME | cut -d: -f1`)
+      ARR_LENGTH=`expr ${#ID_DEST_MATCHES_ARR[@]} - 1`
+      ARR_COUNTER=0
 
-         # Make file available for download
-         DST_NAME_ONLY=`echo $DEST_NAME | rev | cut -d/ -f1 | rev | sed 's/.gz//g'`
-         zgrep -e "[:alnum::blank:]*" $DEST_NAME > files/$DST_NAME_ONLY
-      fi
+      until [[ $ARR_COUNTER -gt $ARR_LENGTH ]]
+      do
+	LINE_NUMBER=`expr ${ID_DEST_MATCHES_ARR[$ARR_COUNTER]} + 2`
+	LINE_GRAB=`sed -n "${LINE_NUMBER}p" $DEST_NAME`
+
+        if [[ -n $ID_DEST_MATCHES_ARR ]]; then
+           if [[ -z `echo $LINE_GRAB | grep dummy` ]]; then
+              DEST_MSG_MATCH=`zgrep -e "[:alnum::blank:]*" $DEST_NAME | sed "$LINE_NUMBER,/MSH/!d"`
+              TOTAL=$TOTAL"$DEST_NAME \n $DEST_MSG_MATCH \n"
+           else
+              TOTAL=$TOTAL"\n$DEST_NAME \n $LINE_GRAB\r\n"
+           fi
+
+           # Make file available for download
+           DST_NAME_ONLY=`echo $DEST_NAME | rev | cut -d/ -f1 | rev | sed 's/.gz//g'`
+           zgrep -e "[:alnum::blank:]*" $DEST_NAME > files/$DST_NAME_ONLY
+        fi
+	ARR_COUNTER=`expr $ARR_COUNTER + 1`
+      done
    done
    TOTAL="$CORREL_ID\n${SRC_PATH}/${SRC_NAME_ONLY}\n$SRC_MSG\n$TOTAL DELIMITER"
    echo "$TOTAL"
