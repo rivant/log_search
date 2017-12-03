@@ -21,7 +21,7 @@ REGION_PATTERN='s/[[:alpha:]]*\([0-9]*\)[[:alnum:]]*/\1/'
 
 # Search point for sources
 SRC_REGION_NUM=`echo $SOURCE | sed $REGION_PATTERN`
-SRC_REGION_NAME=`sudo -Au \#800 ls $ADAPTER_HOME/REGION | grep -E "[A-Z]$SRC_REGION_NUM"`
+SRC_REGION_NAME=`sudo -Au \#800 ls $ADAPTER_HOME/REGION | grep -E "[A-Z]$SRC_REGION_NUM$"`
 SRC_PATH="${ADAPTER_HOME}/REGION/$SRC_REGION_NAME/LOG"
 
 # Search point for destinations
