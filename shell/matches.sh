@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/ksh93
 
 # User Input. Validated on web page.
 # All required except for DEST
@@ -24,7 +24,7 @@ SRC_PATH="${ADAPTER_HOME}/REGION/$SRC_REGION_NAME/LOG"
 # Search point for destinations
 if [[ -n $DEST ]]; then
    DEST_REGION_NUM=`echo $DEST | sed $REGION_PATTERN`
-   DEST_REGION_NAME=`ls $ADAPTER_HOME/REGION | grep -E "[A-Z]$DEST_REGION_NUM"`
+   DEST_REGION_NAME=`ls $ADAPTER_HOME/REGION | grep -E "[A-Z]$DEST_REGION_NUM$"`
    DEST_PATH="${ADAPTER_HOME}/REGION/$DEST_REGION_NAME/LOG"
    DEST_LOG="${DEST}_DEST.log"
 else
