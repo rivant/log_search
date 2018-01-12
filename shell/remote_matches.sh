@@ -85,4 +85,5 @@ do
 	TOTAL=''
 done
 rm ~/.sudopass
-sleep 3; rm -rf ~/transfer_temp
+sleep 2
+rm -rf ~/transfer_temp
