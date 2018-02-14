@@ -53,36 +53,48 @@ DEST_DATE_MATCHES=`sudo -Au \#800 find $DEST_PATH -type f -mtime +$END_TIME ! -m
 # Match sources to dests
 for SRC_ENTRY in $SRC_MATCHES
 do
-   SRC_LINE_NUM=`echo $SRC_ENTRY | cut -f2 -d:`
-   SRC_FILE_NAME=`echo $SRC_ENTRY | cut -f1 -d:`
+  SRC_LINE_NUM=`echo $SRC_ENTRY | cut -f2 -d:`
+  SRC_FILE_NAME=`echo $SRC_ENTRY | cut -f1 -d:`
 	
-	# Make file available for download
-   SRC_NAME_ONLY=`echo $SRC_FILE_NAME | rev | cut -d/ -f1 | rev | sed 's/.gz//g'`
-   sudo -Au \#800 zgrep -e "[[:alnum:]]*" $SRC_FILE_NAME > ~/transfer_temp/$SRC_NAME_ONLY	
-	
-   SRC_MSG=`sudo -Au \#800 zgrep "[[:alnum:]]*" $SRC_FILE_NAME | sed "${SRC_LINE_NUM},/ACKCODE/!d"`
-   if [[ -n `echo $SRC_MSG | grep "MSA|"` ]]; then
-      continue
-   fi
-   CORREL_ID=`echo $SRC_MSG | sed 's/.* COREL ID = \([A-Z0-9]*\) .*/\1/'`
-   for DEST_NAME in $DEST_DATE_MATCHES
-   do
-      DEST_PARTIAL=`sudo -Au \#800 zgrep $CORREL_ID $DEST_NAME`
-      if [[ -n $DEST_PARTIAL ]]; then
-         if [[ -z `echo $DEST_PARTIAL | grep dummy` ]]; then
-            DEST_MATCH=`sudo -Au \#800 zgrep "[[:alnum:]]*" $DEST_NAME | sed "/$CORREL_ID/,/MSH/!d"`
-            TOTAL=$TOTAL"$DEST_NAME \n $DEST_MATCH \n"
-         else
-            TOTAL=$TOTAL"$DEST_NAME \n $DEST_PARTIAL \n"
-         fi
-			
-			# Make file available for download
-         DEST_NAME_ONLY=`echo $DEST_NAME | rev | cut -d/ -f1 | rev | sed 's/.gz//g'`
-         sudo -Au \#800 zgrep -e "[[:alnum:]]*" $DEST_NAME > ~/transfer_temp/$DEST_NAME_ONLY
+  # Make file available for download
+  SRC_NAME_ONLY=`echo $SRC_FILE_NAME | rev | cut -d/ -f1 | rev | sed 's/.gz//g'`
+  sudo -Au \#800 zgrep -e "[[:alnum:]]*" $SRC_FILE_NAME > ~/transfer_temp/$SRC_NAME_ONLY	
+       
+  SRC_MSG=`sudo -Au \#800 zgrep "[[:alnum:]]*" $SRC_FILE_NAME | sed "${SRC_LINE_NUM},/ACKCODE/!d"`
+  if [[ -n `echo $SRC_MSG | grep "MSA|"` ]]; then
+     continue
+  fi
+  CORREL_ID=`echo $SRC_MSG | sed 's/.* COREL ID = \([A-Z0-9]*\) .*/\1/'`
+
+  for DEST_NAME in $DEST_DATE_MATCHES
+  do
+    # Check for matching correlation Id's
+    ID_DEST_MATCHES_ARR=(`sudo -Au \#800 zgrep -n "Id $CORREL_ID" $DEST_NAME | cut -d: -f1`)
+    ARR_LENGTH=`expr ${#ID_DEST_MATCHES_ARR[@]} - 1`
+    ARR_COUNTER=0
+
+    until [[ $ARR_COUNTER -gt $ARR_LENGTH ]]
+    do
+      LINE_NUMBER=`expr ${ID_DEST_MATCHES_ARR[$ARR_COUNTER]} + 2`
+      LINE_GRAB=`sudo -Au \#800 sed -n "${LINE_NUMBER}p" $DEST_NAME`
+
+      if [[ -n $ID_DEST_MATCHES_ARR ]]; then
+        if [[ -z `echo $LINE_GRAB | grep dummy` ]]; then
+           DEST_MSG_MATCH=`sudo -Au \#800 zgrep -e "[:alnum::blank:]*" $DEST_NAME | sed "$LINE_NUMBER,/MSH/!d"`
+           TOTAL=$TOTAL"$DEST_NAME \n $DEST_MSG_MATCH \n"
+        else
+           TOTAL=$TOTAL"\n$DEST_NAME \n $LINE_GRAB\r\n"
+        fi
+
+        # Make file available for download
+        DEST_NAME_ONLY=`echo $DEST_NAME | rev | cut -d/ -f1 | rev | sed 's/.gz//g'`
+        sudo -Au \#800 zgrep -e "[:alnum::blank:]*" $DEST_NAME > ~/transfer_temp/$DEST_NAME_ONLY
       fi
-   done
-   echo "$CORREL_ID\n${SRC_PATH}/${SRC_NAME_ONLY}\n$SRC_MSG\n$TOTAL\nDELIMITER"
-	TOTAL=''
+      ARR_COUNTER=`expr $ARR_COUNTER + 1`
+    done
+  done
+  echo "$CORREL_ID\n${SRC_PATH}/${SRC_NAME_ONLY}\n$SRC_MSG\n$TOTAL\nDELIMITER"
+  TOTAL=''
 done
 rm ~/.sudopass
 sleep 2
