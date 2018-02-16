@@ -10,7 +10,7 @@ set Dest [lindex $argv 7]
 set Script shell/remote_matches.sh
 set timeout 90
 
-spawn -noecho ksh -c "ssh -o StrictHostKeyChecking=no $ID@$IP ksh -s < $Script $Source $Pattern $End_Time $Start_Time $env($tempTitle) $Dest"
+spawn -noecho ksh93 -c "ssh -o StrictHostKeyChecking=no $ID@$IP ksh93 -s < $Script $Source $Pattern $End_Time $Start_Time $env($tempTitle) $Dest"
 
 log_user 0
 expect "eDir Password:"

@@ -60,7 +60,7 @@ do
   SRC_NAME_ONLY=`echo $SRC_FILE_NAME | rev | cut -d/ -f1 | rev | sed 's/.gz//g'`
   sudo -Au \#800 zgrep -e "[[:alnum:]]*" $SRC_FILE_NAME > ~/transfer_temp/$SRC_NAME_ONLY	
        
-  SRC_MSG=`sudo -Au \#800 zgrep "[[:alnum:]]*" $SRC_FILE_NAME | sed "${SRC_LINE_NUM},/ACKCODE/!d"`
+  SRC_MSG=`sudo -Au \#800 zgrep "[[:alnum:]]*" $SRC_FILE_NAME | sed "${SRC_LINE_NUM},/COREL ID/!d"`
   if [[ -n `echo $SRC_MSG | grep "MSA|"` ]]; then
      continue
   fi
@@ -76,7 +76,7 @@ do
     until [[ $ARR_COUNTER -gt $ARR_LENGTH ]]
     do
       LINE_NUMBER=`expr ${ID_DEST_MATCHES_ARR[$ARR_COUNTER]} + 2`
-      LINE_GRAB=`sudo -Au \#800 sed -n "${LINE_NUMBER}p" $DEST_NAME`
+      LINE_GRAB=`sudo -Au \#800 zgrep -e "[:alnum::blank:]*" $DEST_NAME | sed -n "${LINE_NUMBER}p"`
 
       if [[ -n $ID_DEST_MATCHES_ARR ]]; then
         if [[ -z `echo $LINE_GRAB | grep dummy` ]]; then
