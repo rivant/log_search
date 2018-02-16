@@ -57,7 +57,7 @@ do
    SRC_NAME_ONLY=`echo $SRC_FILE_NAME | rev | cut -d/ -f1 | rev | sed 's/.gz//g'`
    zgrep -e "[:alnum::blank:]*" $SRC_FILE_NAME > files/$SRC_NAME_ONLY
 
-   SRC_MSG=`zgrep -e "[:alnum::blank:]*" $SRC_FILE_NAME | sed "${SRC_LINE_NUM},/ACKCODE/!d"`
+   SRC_MSG=`zgrep -e "[:alnum::blank:]*" $SRC_FILE_NAME | sed "${SRC_LINE_NUM},/COREL ID/!d"`
    if [[ -n `echo $SRC_MSG | grep "MSA|"` ]]; then
       continue
    fi
