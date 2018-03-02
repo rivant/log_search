@@ -60,10 +60,14 @@ do
   SRC_NAME_ONLY=`echo $SRC_FILE_NAME | rev | cut -d/ -f1 | rev | sed 's/.gz//g'`
   sudo -Au \#800 zgrep -e "[[:alnum:]]*" $SRC_FILE_NAME > ~/transfer_temp/$SRC_NAME_ONLY	
        
-  SRC_MSG=`sudo -Au \#800 zgrep "[[:alnum:]]*" $SRC_FILE_NAME | sed "${SRC_LINE_NUM},/COREL ID/!d"`
-  if [[ -n `echo $SRC_MSG | grep "MSA|"` ]]; then
+  # Get Message
+	SRC_MSG=`sudo -Au \#800 zgrep "[[:alnum:]]*" $SRC_FILE_NAME | sed "${SRC_LINE_NUM},/COREL ID/!d"`
+	
+  # Skip if not an actual message
+	if [[ -n `echo $SRC_MSG | grep "MSA|"` ]] || [[ -z `sed "${SRC_LINE_NUM},${SRC_LINE_NUM}!d" | grep "MSH|"` ]]; then
      continue
   fi
+	
   CORREL_ID=`echo $SRC_MSG | sed 's/.* COREL ID = \([A-Z0-9]*\) .*/\1/'`
 
   for DEST_NAME in $DEST_DATE_MATCHES
