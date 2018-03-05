@@ -36,10 +36,11 @@ else
 fi
 
 # Find $SOURCE files in date range.  Return file name and line number of $SEARCH
+# Filter out Ack Messages, and search criteria outside of a message
 if [ `sudo -Au \#800 ls $SRC_PATH 2>/dev/null | wc -l` != 0 ]; then
-   SRC_MATCHES=`sudo -Au \#800 find $SRC_PATH -type f -mtime +$END_TIME ! -mtime +$START_TIME | grep "${SOURCE}_SOURCE.log" | sort -r | xargs sudo -Au \#800 zgrep -n $SEARCH /dev/null| cut -f1-2 -d:`
+   SRC_MATCHES=`sudo -Au \#800 find $SRC_PATH -type f -mtime +$END_TIME ! -mtime +$START_TIME | grep "${SOURCE}_SOURCE.log" | sort -r | xargs sudo -Au \#800 zgrep -n $SEARCH /dev/null | grep -v "MSA|" | grep "MSH|" | cut -f1-2 -d:`
    if [[ -z $SRC_MATCHES ]]; then
-      printf "Cannot find $SEARCH in $SOURCE Source Logs." 1>&2
+      printf "Cannot find $SEARCH in $SOURCE Source Log Messages." 1>&2
       exit 1
    fi
 else
@@ -57,17 +58,11 @@ do
   SRC_FILE_NAME=`echo $SRC_ENTRY | cut -f1 -d:`
 	
   # Make file available for download
-  SRC_NAME_ONLY=`echo $SRC_FILE_NAME | rev | cut -d/ -f1 | rev | sed 's/.gz//g'`
+  SRC_NAME_ONLY=`echo $SRC_FILE_NAME | rev | cut -d/ -f1 | rev | sed 's/.gz/.log/g'`
   sudo -Au \#800 zgrep -e "[[:alnum:]]*" $SRC_FILE_NAME > ~/transfer_temp/$SRC_NAME_ONLY	
        
-  # Get Message
-	SRC_MSG=`sudo -Au \#800 zgrep "[[:alnum:]]*" $SRC_FILE_NAME | sed "${SRC_LINE_NUM},/COREL ID/!d"`
-	
-  # Skip if not an actual message
-	if [[ -n `echo $SRC_MSG | grep "MSA|"` ]] || [[ -z `sed "${SRC_LINE_NUM},${SRC_LINE_NUM}!d" | grep "MSH|"` ]]; then
-     continue
-  fi
-	
+  # Get Message + message info
+	SRC_MSG=`sudo -Au \#800 zgrep "[[:alnum:]]*" $SRC_FILE_NAME | sed "${SRC_LINE_NUM},/COREL ID/!d"`		
   CORREL_ID=`echo $SRC_MSG | sed 's/.* COREL ID = \([A-Z0-9]*\) .*/\1/'`
 
   for DEST_NAME in $DEST_DATE_MATCHES
@@ -91,7 +86,7 @@ do
         fi
 
         # Make file available for download
-        DEST_NAME_ONLY=`echo $DEST_NAME | rev | cut -d/ -f1 | rev | sed 's/.gz//g'`
+        DEST_NAME_ONLY=`echo $DEST_NAME | rev | cut -d/ -f1 | rev | sed 's/.gz/.log/g'`
         sudo -Au \#800 zgrep -e "[:alnum::blank:]*" $DEST_NAME > ~/transfer_temp/$DEST_NAME_ONLY
       fi
       ARR_COUNTER=`expr $ARR_COUNTER + 1`
@@ -101,5 +96,5 @@ do
   TOTAL=''
 done
 rm ~/.sudopass
-sleep 2
+sleep 1
 rm -rf ~/transfer_temp

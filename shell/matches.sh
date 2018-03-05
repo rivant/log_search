@@ -11,7 +11,6 @@ DEST=$5
 # Common variables
 ADAPTER_HOME=`printenv HOME|cut -d'/' -f1-3`
 REGION_PATTERN='s/[[:alpha:]]*\([0-9]*\)[[:alnum:]]*/\1/'
-C2N="tr '[:cntrl:]' '[\\n*]'"
 
 # Download cleanup
 find files -type f -mmin +240 | xargs rm
@@ -33,10 +32,11 @@ else
 fi
 
 # Find $SOURCE files in date range.  Return file name and line number of $SEARCH
+# Filter out Ack Messages, and search criteria outside of a message
 if [ `ls $SRC_PATH 2>/dev/null | wc -l` != 0 ]; then
-   SRC_MATCHES=`find $SRC_PATH -type f -mtime +$END_TIME ! -mtime +$START_TIME | grep "${SOURCE}_SOURCE.log" | sort -r | xargs zgrep -n $SEARCH /dev/null | cut -d: -f1-2`
+   SRC_MATCHES=`find $SRC_PATH -type f -mtime +$END_TIME ! -mtime +$START_TIME | grep "${SOURCE}_SOURCE.log" | sort -r | xargs zgrep -n $SEARCH /dev/null | grep -v "MSA|" | grep "MSH|" | cut -d: -f1-2`
    if [[ -z $SRC_MATCHES ]]; then
-      printf "Cannot find $SEARCH in $SOURCE Source Logs." 1>&2
+      printf "Cannot find $SEARCH in $SOURCE Source Log Messages." 1>&2
       exit 1
    fi
 else
@@ -54,13 +54,11 @@ do
    SRC_FILE_NAME=`echo $SRC_ENTRY | cut -f1 -d:`
 
    # Make file available for download
-   SRC_NAME_ONLY=`echo $SRC_FILE_NAME | rev | cut -d/ -f1 | rev | sed 's/.gz//g'`
+   SRC_NAME_ONLY=`echo $SRC_FILE_NAME | rev | cut -d/ -f1 | rev | sed 's/.gz/.log/g'`
    zgrep -e "[:alnum::blank:]*" $SRC_FILE_NAME > files/$SRC_NAME_ONLY
 
-   SRC_MSG=`zgrep -e "[:alnum::blank:]*" $SRC_FILE_NAME | sed "${SRC_LINE_NUM},/COREL ID/!d"`
-   if [[ -n `echo $SRC_MSG | grep "MSA|"` ]]; then
-      continue
-   fi
+	 # Get Message + message info
+   SRC_MSG=`zgrep -e "[:alnum::blank:]*" $SRC_FILE_NAME | sed "${SRC_LINE_NUM},/COREL ID/!d"`   
    CORREL_ID=`echo $SRC_MSG | sed 's/.* COREL ID = \([A-Z0-9]*\) .*/\1/'`
 
    for DEST_NAME in $DEST_DATE_MATCHES
@@ -72,8 +70,8 @@ do
 
       until [[ $ARR_COUNTER -gt $ARR_LENGTH ]]
       do
-	LINE_NUMBER=`expr ${ID_DEST_MATCHES_ARR[$ARR_COUNTER]} + 2`
-	LINE_GRAB=`sed -n "${LINE_NUMBER}p" $DEST_NAME`
+				LINE_NUMBER=`expr ${ID_DEST_MATCHES_ARR[$ARR_COUNTER]} + 2`
+				LINE_GRAB=`sed -n "${LINE_NUMBER}p" $DEST_NAME`
 
         if [[ -n $ID_DEST_MATCHES_ARR ]]; then
            if [[ -z `echo $LINE_GRAB | grep dummy` ]]; then
@@ -84,7 +82,7 @@ do
            fi
 
            # Make file available for download
-           DST_NAME_ONLY=`echo $DEST_NAME | rev | cut -d/ -f1 | rev | sed 's/.gz//g'`
+           DST_NAME_ONLY=`echo $DEST_NAME | rev | cut -d/ -f1 | rev | sed 's/.gz/.log/g'`
            zgrep -e "[:alnum::blank:]*" $DEST_NAME > files/$DST_NAME_ONLY
         fi
 	ARR_COUNTER=`expr $ARR_COUNTER + 1`
