@@ -9,26 +9,39 @@ START_TIME=$4
 DEST=$5
 
 # Common variables
-ADAPTER_HOME=`printenv HOME|cut -d'/' -f1-3`
-REGION_PATTERN='s/[[:alpha:]]*\([0-9]*\)[[:alnum:]]*/\1/'
+ADAPTER_HOME=`printenv HOME`
+REGION_PATTERN='s/[[:alpha:]-]*\([0-9]*\)[[:alnum:]]*/\1/'
+REGION_NAMES=`ls $ADAPTER_HOME/REGION`
 
 # Download cleanup
 find files -type f -mmin +240 | xargs rm
 
 # Search point for sources
 SRC_REGION_NUM=`echo $SOURCE | sed $REGION_PATTERN`
-SRC_REGION_NAME=`ls $ADAPTER_HOME/REGION | grep -E "[A-Z]$SRC_REGION_NUM$"`
+SRC_REGION_NAME=`echo "$REGION_NAMES" | grep -E "[A-Z]$SRC_REGION_NUM$"`
 SRC_PATH="${ADAPTER_HOME}/REGION/$SRC_REGION_NAME/LOG"
 
-# Search point for destinations
+# Search points for destinations
 if [[ -n $DEST ]]; then
    DEST_REGION_NUM=`echo $DEST | sed $REGION_PATTERN`
-   DEST_REGION_NAME=`ls $ADAPTER_HOME/REGION | grep -E "[A-Z]$DEST_REGION_NUM$"`
+   DEST_REGION_NAME=`echo "$REGION_NAMES" | grep -E "[A-Z]$DEST_REGION_NUM$"`
    DEST_PATH="${ADAPTER_HOME}/REGION/$DEST_REGION_NAME/LOG"
    DEST_LOG="${DEST}_DEST.log"
+	 DEST_DATE_MATCHES=`find $DEST_PATH -type f -mtime +$END_TIME ! -mtime +$START_TIME | grep $DEST_LOG | sort -r`
 else
-   DEST_PATH="${ADAPTER_HOME}/REGION"
-   DEST_LOG="_DEST.log"
+	DOWNSTREAM=`cat ${ADAPTER_HOME}/REGION/$SRC_REGION_NAME/CONFIG/${SRC_REGION_NAME}Adapter.xml | sed "/${SOURCE}_SOURCE/,/<\/destinations>/!d" | grep '<destID>' | sed 's/.*>\([A-Z0-9-]*\)<.*/\1/'`
+	NUM_CHECK=''
+	for adapter in $DOWNSTREAM
+	do
+		DEST_REGION_NUM=`echo $adapter | sed $REGION_PATTERN`		
+		if [[ -n `echo $NUM_CHECK | grep $DEST_REGION_NUM` ]]; then
+			continue
+		fi
+		NUM_CHECK="$NUM_CHECK $DEST_REGION_NUM"
+		DEST_REGION_NAME=`echo "$REGION_NAMES" | grep -E "[A-Z]$DEST_REGION_NUM$"`
+		DEST_PATH="$DEST_PATH ${ADAPTER_HOME}/REGION/$DEST_REGION_NAME/LOG"		
+	done
+	DEST_DATE_MATCHES=`find $DEST_PATH -type f -mtime +$END_TIME ! -mtime +$START_TIME | grep _DEST.log | sort -r`
 fi
 
 # Find $SOURCE files in date range.  Return file name and line number of $SEARCH
@@ -43,9 +56,6 @@ else
   printf "Cannot find $SRC_PATH\n" 1>&2
   exit 1
 fi
-
-# Find dest files in date range and $DEST_PATH
-DEST_DATE_MATCHES=`find $DEST_PATH -type f -mtime +$END_TIME ! -mtime +$START_TIME | grep $DEST_LOG | sort -r`
 
 # Match sources to dests
 for SRC_ENTRY in $SRC_MATCHES
