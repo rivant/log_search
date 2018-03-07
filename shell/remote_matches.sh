@@ -16,24 +16,46 @@ export SUDO_ASKPASS=~/.sudopass
 mkdir -p ~/transfer_temp
 
 # Common variables
-ADAPTER_HOME=`sudo -Au \#800 printenv HOME | cut -d'/' -f1-3`
-REGION_PATTERN='s/[[:alpha:]]*\([0-9]*\)[[:alnum:]]*/\1/'
+ADAPTER_HOME=`sudo -Au \#800 printenv HOME`
+REGION_PATTERN='s/[[:alpha:]-]*\([0-9]*\)[[:alnum:]]*/\1/'
+REGION_NAMES=`sudo -Au \#800 ls $ADAPTER_HOME/REGION`
 
 # Search point for sources
 SRC_REGION_NUM=`echo $SOURCE | sed $REGION_PATTERN`
-SRC_REGION_NAME=`sudo -Au \#800 ls $ADAPTER_HOME/REGION | grep -E "[A-Z]$SRC_REGION_NUM$"`
+SRC_REGION_NAME=`echo "$REGION_NAMES" | grep -E "[A-Z]$SRC_REGION_NUM$"`
 SRC_PATH="${ADAPTER_HOME}/REGION/$SRC_REGION_NAME/LOG"
 
 # Search point for destinations
 if [[ -n $DEST ]]; then
    DEST_REGION_NUM=`echo $DEST | sed $REGION_PATTERN`
-   DEST_REGION_NAME=`sudo -Au \#800 ls $ADAPTER_HOME/REGION | grep -E "[A-Z]$DEST_REGION_NUM$"`
+   DEST_REGION_NAME=`echo "$REGION_NAMES" | grep -E "[A-Z]$DEST_REGION_NUM$"`
    DEST_PATH="${ADAPTER_HOME}/REGION/$DEST_REGION_NAME/LOG"
-   DEST_LOG="${DEST}_DEST.log"
+   DEST_LOG="${DEST}_DEST.log"	 
 else
-   DEST_PATH="${ADAPTER_HOME}/REGION"
-   DEST_LOG="_DEST.log"
+  DOWNSTREAM=`sudo -Au \#800 cat ${ADAPTER_HOME}/REGION/$SRC_REGION_NAME/CONFIG/${SRC_REGION_NAME}Adapter.xml | sed "/${SOURCE}_SOURCE/,/<\/destinations>/!d" | grep '<destID>' | sed 's/.*>\([A-Z0-9-]*\)<.*/\1/'`
+	NUM_CHECK=''
+	for adapter in $DOWNSTREAM
+	do
+		DEST_REGION_NUM=`echo $adapter | sed $REGION_PATTERN`
+		DEST_REGION_NAME=`echo "$REGION_NAMES" | grep -E "[A-Z]$DEST_REGION_NUM$"`
+		
+		# Prevent storing duplicate regions and missing regions
+		if [[ -n `echo $NUM_CHECK | grep $DEST_REGION_NUM` ]] || [[ -z $DEST_REGION_NAME ]]; then
+			continue
+		fi
+		
+		# Select last region on duplicates
+		REGION_NAME_COUNT=`echo $DEST_REGION_NAME | wc -w`
+		if [ $REGION_NAME_COUNT > 1 ]; then
+			DEST_REGION_NAME=`echo $DEST_REGION_NAME | cut -d' ' -f $REGION_NAME_COUNT`
+		fi
+
+		NUM_CHECK="$NUM_CHECK $DEST_REGION_NUM"		
+		DEST_PATH="$DEST_PATH ${ADAPTER_HOME}/REGION/$DEST_REGION_NAME/LOG"		
+	done
+	DEST_LOG="_DEST.log"
 fi
+DEST_DATE_MATCHES=`sudo -Au \#800 find $DEST_PATH -type f -mtime +$END_TIME ! -mtime +$START_TIME | grep $DEST_LOG | sort -r`
 
 # Find $SOURCE files in date range.  Return file name and line number of $SEARCH
 # Filter out Ack Messages, and search criteria outside of a message
@@ -47,9 +69,6 @@ else
   printf "Cannot find $SRC_PATH\n" 1>&2
   exit 1
 fi
-
-# Find dest files in date range and $DEST_PATH
-DEST_DATE_MATCHES=`sudo -Au \#800 find $DEST_PATH -type f -mtime +$END_TIME ! -mtime +$START_TIME | grep $DEST_LOG | sort -r`
 
 # Match sources to dests
 for SRC_ENTRY in $SRC_MATCHES
