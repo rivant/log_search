@@ -77,6 +77,9 @@ do
       ID_DEST_MATCHES_ARR=(`zgrep -n "Id $CORREL_ID" $DEST_NAME | cut -d: -f1`)
       ARR_LENGTH=`expr ${#ID_DEST_MATCHES_ARR[@]} - 1`
       ARR_COUNTER=0
+			if [[ $ARR_LENGTH -gt 20 ]]; then
+				continue
+			fi
 
       until [[ $ARR_COUNTER -gt $ARR_LENGTH ]]
       do
@@ -97,6 +100,7 @@ do
         fi
 				ARR_COUNTER=`expr $ARR_COUNTER + 1`
       done
+			
    done
    TOTAL="$CORREL_ID\n${SRC_PATH}/${SRC_NAME_ONLY}\n$SRC_MSG\n$TOTAL DELIMITER"
    echo "$TOTAL"

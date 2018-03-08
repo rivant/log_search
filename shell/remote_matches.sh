@@ -90,6 +90,9 @@ do
     ID_DEST_MATCHES_ARR=(`sudo -Au \#800 zgrep -n "Id $CORREL_ID" $DEST_NAME | cut -d: -f1`)
     ARR_LENGTH=`expr ${#ID_DEST_MATCHES_ARR[@]} - 1`
     ARR_COUNTER=0
+		if [[ $ARR_LENGTH -gt 20 ]]; then
+			continue
+		fi
 
     until [[ $ARR_COUNTER -gt $ARR_LENGTH ]]
     do
