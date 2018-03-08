@@ -66,6 +66,7 @@
 
 <body>
    <h2>Find Correlating Messages in Logs</h2>
+	 <div style='display: inline-block'>
    <form method="post" action="/">
       <select id="server_select" name="Server">
          <option value="10.248.202.25">UAT Server</option>
@@ -84,13 +85,7 @@
          <span class="cred_label">Password</span>
          <input class="cred_input" type="password" name="Password" maxLength="40" value="<%= content.params.Password %>" style="<%= content.borderPassword %>" />
       </div>
-			<div id='reference-block'>
-				<h4 id='reference-title'>Adapter Naming References</h4>
-				<a href='https://apps.dignityhealth.org/connexionsupporttool/#!/reference/applications' target='_blank'>Apps</a><br/>
-				<a href='https://apps.dignityhealth.org/connexionsupporttool/#!/reference/regionList' target='_blank'>Regions</a><br/>
-				<label>Syntax: Application Name + Region Number + Message Type</label><br/>
-				<label>Example: Initiate + Sacramento + ADT and Scheduling = INI30MIX</label>
-			</div>
+			
       <br/>
  
       <span class="labels">Source Adapter</span>
@@ -107,7 +102,16 @@
       <br/><br/>
       <input type="submit" value="Submit" /></form><br/>
       <br/>
-   </form><br/>
+   </form>
+	 </div>
+	 
+	 <div id='reference-block'>
+			<h4 id='reference-title'>Adapter Naming References</h4>
+			<a href='https://apps.dignityhealth.org/connexionsupporttool/#!/reference/applications' target='_blank'>Apps</a><br/>
+			<a href='https://apps.dignityhealth.org/connexionsupporttool/#!/reference/regionList' target='_blank'>Regions</a><br/>
+			<label>Syntax: Application Name + Region Number + Message Type</label><br/>
+			<label>Example: Initiate + Sacramento + ADT and Scheduling = INI30MIX</label>
+		</div>
 
    <div class="totals" style=<%= content.totalDisplay %>>
       <span>Total Source Matches: </span><span id="srcCount"><%= content.srcTotal %></span><br/>
@@ -128,4 +132,5 @@
       }
    });
 </script>
+
 </html>
