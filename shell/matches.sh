@@ -80,27 +80,27 @@ do
 			if [[ $ARR_LENGTH -gt 20 ]]; then
 				continue
 			fi
-
+			
+			# Make file available for download
+      DST_NAME_ONLY=`echo $DEST_NAME | rev | cut -d/ -f1 | rev | sed 's/.gz/.log/g'`
+      zgrep -e "[:alnum::blank:]*" $DEST_NAME > files/$DST_NAME_ONLY
+					
       until [[ $ARR_COUNTER -gt $ARR_LENGTH ]]
       do
 				LINE_NUMBER=`expr ${ID_DEST_MATCHES_ARR[$ARR_COUNTER]} + 2`
 				LINE_GRAB=`sed -n "${LINE_NUMBER}p" $DEST_NAME`
 
-        if [[ -n $ID_DEST_MATCHES_ARR ]]; then
-           if [[ -z `echo $LINE_GRAB | grep dummy` ]]; then
-              DEST_MSG_MATCH=`zgrep -e "[:alnum::blank:]*" $DEST_NAME | sed "$LINE_NUMBER,/MSH/!d"`
-              TOTAL=$TOTAL"$DEST_NAME \n $DEST_MSG_MATCH \n"
-           else
-              TOTAL=$TOTAL"\n$DEST_NAME \n $LINE_GRAB\r\n"
-           fi
-
-           # Make file available for download
-           DST_NAME_ONLY=`echo $DEST_NAME | rev | cut -d/ -f1 | rev | sed 's/.gz/.log/g'`
-           zgrep -e "[:alnum::blank:]*" $DEST_NAME > files/$DST_NAME_ONLY
+        if [[ -n $ID_DEST_MATCHES_ARR ]]; then					
+          #if [[ -z `echo $LINE_GRAB | grep dummy` ]] && [[ -z `echo $LINE_GRAB | grep -E "(WARN|ERROR|SEQCNTL)"` ]]; then
+					if [[ -z `echo $LINE_GRAB | grep dummy` ]]; then
+            DEST_MSG_MATCH=`zgrep -e "[:alnum::blank:]*" $DEST_NAME | sed "$LINE_NUMBER,/MSH/!d"`
+            TOTAL=$TOTAL"$DEST_NAME \n $DEST_MSG_MATCH \n"
+          else
+            TOTAL=$TOTAL"\n$DEST_NAME \n $LINE_GRAB\r\n"
+          fi          
         fi
 				ARR_COUNTER=`expr $ARR_COUNTER + 1`
-      done
-			
+      done		
    done
    TOTAL="$CORREL_ID\n${SRC_PATH}/${SRC_NAME_ONLY}\n$SRC_MSG\n$TOTAL DELIMITER"
    echo "$TOTAL"
