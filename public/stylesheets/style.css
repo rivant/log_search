@@ -49,9 +49,6 @@ input[value="Submit"] {
    text-align: center;
    display: inline-block;
 }
-li {
-   list-style: none;
-}
 #reference-block {
 	display: inline-block;
 	position: absolute;

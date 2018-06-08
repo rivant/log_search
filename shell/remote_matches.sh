@@ -95,7 +95,7 @@ do
 		fi
 		
 		# Make file available for download
-    DEST_NAME_ONLY=`echo $DEST_NAME | rev | cut -d/ -f1 | rev | sed 's/.gz/.log/g'`
+    DEST_NAME_ONLY=`echo $DEST_NAME | rev | cut -d/ -f1 | rev | sed 's/gz/log/g'`
     sudo -Au \#800 zgrep -e "[:alnum::blank:]*" $DEST_NAME > ~/transfer_temp/$DEST_NAME_ONLY
 
     until [[ $ARR_COUNTER -gt $ARR_LENGTH ]]
@@ -109,11 +109,10 @@ do
            TOTAL=$TOTAL"$DEST_NAME \n $DEST_MSG_MATCH \n"
         else
            TOTAL=$TOTAL"\n$DEST_NAME \n $LINE_GRAB\r\n"
-        fi       
+        fi
       fi
       ARR_COUNTER=`expr $ARR_COUNTER + 1`
     done
-		
   done
   echo "$CORREL_ID\n${SRC_PATH}/${SRC_NAME_ONLY}\n$SRC_MSG\n$TOTAL\nDELIMITER"
   TOTAL=''

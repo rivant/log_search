@@ -1,21 +1,19 @@
-var srcAdapter = /[A-Z0-9]*_.*SOURCE/, region = /REGION\/([A-Z0-9]*)\//, dstAdapter = /[A-Z0-9]*_.*DEST/;
-var sources = [], destinations = [];
-var srcStr = "<%= script.regionSrcList() %>";
-var dstStr = "<%= script.regionDstList() %>";
-var srcArr = srcStr.split(',');
-var dstArr = dstStr.split(',');
-srcArr.forEach( (val, idx) => {
-   if (region.test(val) && srcAdapter.test(val)){
-      sources[idx] = { label: srcAdapter.exec(val)[0], category: region.exec(val)[1] };
-   }
-});
-dstArr.forEach( (val, idx) => {
-   if (region.test(val) && dstAdapter.test(val)){
-      destinations[idx] = { label: dstAdapter.exec(val)[0], category: region.exec(val)[1] };
-   }
-});
+function adapterLists(srcArr, dstArr) {
+	var srcAdapter = /[A-Z0-9]*_.*SOURCE/, region = /REGION\/([A-Z0-9]*)\//, dstAdapter = /[A-Z0-9]*_.*DEST/;
+	var sources = [];
+	destinations = [];
+	
+	srcArr.forEach( (val) => {
+    if (region.test(val) && srcAdapter.test(val)){
+      sources.push({ label: srcAdapter.exec(val)[0], category: region.exec(val)[1] });
+    }
+  });
+  dstArr.forEach( (val) => {
+    if (region.test(val) && dstAdapter.test(val)){
+      destinations.push({ label: dstAdapter.exec(val)[0], category: region.exec(val)[1] });
+     }
+    });
 
-$( function() {
   $.widget( "custom.catcomplete", $.ui.autocomplete, {
     _create: function() {
       this._super();
@@ -37,7 +35,7 @@ $( function() {
       });
     }
   });
-
+	
    $( "#source" ).catcomplete({
       delay: 0,
       source: sources
@@ -46,4 +44,4 @@ $( function() {
       delay: 0,
       source: destinations
    });
-} );
+}

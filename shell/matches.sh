@@ -82,7 +82,7 @@ do
 			fi
 			
 			# Make file available for download
-      DST_NAME_ONLY=`echo $DEST_NAME | rev | cut -d/ -f1 | rev | sed 's/.gz/.log/g'`
+      DST_NAME_ONLY=`echo $DEST_NAME | rev | cut -d/ -f1 | rev | sed 's/gz/log/g'`
       zgrep -e "[:alnum::blank:]*" $DEST_NAME > files/$DST_NAME_ONLY
 					
       until [[ $ARR_COUNTER -gt $ARR_LENGTH ]]

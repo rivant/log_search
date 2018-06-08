@@ -7,60 +7,14 @@
    <link rel="stylesheet" href="stylesheets/style.css">
    <script src="javascripts/jquery-3.2.1.min.js"></script>
    <script src="javascripts/jquery-ui-1.12.1.js"></script>
-   <script>
-   $( function() {
-      var srcAdapter = /[A-Z0-9]*_.*SOURCE/, region = /REGION\/([A-Z0-9]*)\//, dstAdapter = /[A-Z0-9]*_.*DEST/,
-          sources = [], destinations = [],
-          srcArr = "<%= script.regionSrcList() %>".split(','),
-          dstArr = "<%= script.regionDstList() %>".split(',');
-      srcArr.forEach( (val) => {
-         if (region.test(val) && srcAdapter.test(val)){
-            sources.push({ label: srcAdapter.exec(val)[0], category: region.exec(val)[1] });
-         }
-      });
-      dstArr.forEach( (val) => {
-         if (region.test(val) && dstAdapter.test(val)){
-            destinations.push({ label: dstAdapter.exec(val)[0], category: region.exec(val)[1] });
-         }
-      });
-
-     $.widget( "custom.catcomplete", $.ui.autocomplete, {
-       _create: function() {
-         this._super();
-         this.widget().menu( "option", "items", "> :not(.ui-autocomplete-category)" );
-       },
-       _renderMenu: function( ul, items ) {
-         var that = this,
-           currentCategory = "";
-         $.each( items, function( index, item ) {
-           var li;
-           if ( item.category != currentCategory ) {
-             ul.append( "<li class='ui-autocomplete-category'>" + item.category + "</li>" );
-             currentCategory = item.category;
-           }
-           li = that._renderItemData( ul, item );
-           if ( item.category ) {
-             li.attr( "aria-label", item.category + " : " + item.label );
-           }
-         });
-       }
-     });
-
-      $( "#source" ).catcomplete({
-         delay: 0,
-         source: sources
-      });
-      $( "#dest" ).catcomplete({
-         delay: 0,
-         source: destinations
-      });
-   });
-  </script>
-	
+   <script src="javascripts/dropdowns.js"></script>
    <style>
      .destMatch {
        color: #770177;
-	 }
+			}
+			li {
+				list-style: none;
+			}
    </style>
 </head>
 
@@ -131,6 +85,10 @@
          $('#credentials').css('visibility', 'hidden');
       }
    });
+	 
+	var srcArr = "<%= script.regionSrcList() %>".split(',');
+	var dstArr = "<%= script.regionDstList() %>".split(',');
+	adapterLists(srcArr, dstArr);
 </script>
 
 </html>
