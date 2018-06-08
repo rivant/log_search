@@ -58,7 +58,7 @@ fi
 DEST_DATE_MATCHES=`sudo -Au \#800 find $DEST_PATH -type f -mtime +$END_TIME ! -mtime +$START_TIME | grep $DEST_LOG | sort -r`
 
 # Find $SOURCE files in date range.  Return file name and line number of $SEARCH
-# Filter out Ack Messages, and search criteria outside of a message
+# Filter out Ack Messages, and any search criteria outside of an hl7 message
 if [ `sudo -Au \#800 ls $SRC_PATH 2>/dev/null | wc -l` != 0 ]; then
    SRC_MATCHES=`sudo -Au \#800 find $SRC_PATH -type f -mtime +$END_TIME ! -mtime +$START_TIME | grep "${SOURCE}_SOURCE.log" | sort -r | xargs sudo -Au \#800 zgrep -n $SEARCH /dev/null | grep -v "MSA|" | grep "MSH|" | cut -f1-2 -d:`
    if [[ -z $SRC_MATCHES ]]; then
@@ -76,9 +76,10 @@ do
   SRC_LINE_NUM=`echo $SRC_ENTRY | cut -f2 -d:`
   SRC_FILE_NAME=`echo $SRC_ENTRY | cut -f1 -d:`
 	
-  # Make file available for download
-  SRC_NAME_ONLY=`echo $SRC_FILE_NAME | rev | cut -d/ -f1 | rev | sed 's/.gz/.log/g'`
-  sudo -Au \#800 zgrep -e "[[:alnum:]]*" $SRC_FILE_NAME > ~/transfer_temp/$SRC_NAME_ONLY	
+	# Removed download feature, but keep $SRC_NAME_ONLY
+		# Make file available for download
+		SRC_NAME_ONLY=`echo $SRC_FILE_NAME | rev | cut -d/ -f1 | rev | sed 's/.gz/.log/g'`
+		#sudo -Au \#800 zgrep -e "[[:alnum:]]*" $SRC_FILE_NAME > ~/transfer_temp/$SRC_NAME_ONLY	
        
   # Get Message + message info
 	SRC_MSG=`sudo -Au \#800 zgrep "[[:alnum:]]*" $SRC_FILE_NAME | sed "${SRC_LINE_NUM},/COREL ID/!d"`		
@@ -94,9 +95,10 @@ do
 			continue
 		fi
 		
-		# Make file available for download
-    DEST_NAME_ONLY=`echo $DEST_NAME | rev | cut -d/ -f1 | rev | sed 's/gz/log/g'`
-    sudo -Au \#800 zgrep -e "[:alnum::blank:]*" $DEST_NAME > ~/transfer_temp/$DEST_NAME_ONLY
+		# Removed download feature
+			# Make file available for download
+			# DEST_NAME_ONLY=`echo $DEST_NAME | rev | cut -d/ -f1 | rev | sed 's/.gz/.log/g'`
+			# sudo -Au \#800 zgrep -e "[:alnum::blank:]*" $DEST_NAME > ~/transfer_temp/$DEST_NAME_ONLY
 
     until [[ $ARR_COUNTER -gt $ARR_LENGTH ]]
     do
@@ -109,14 +111,16 @@ do
            TOTAL=$TOTAL"$DEST_NAME \n $DEST_MSG_MATCH \n"
         else
            TOTAL=$TOTAL"\n$DEST_NAME \n $LINE_GRAB\r\n"
-        fi
+        fi       
       fi
       ARR_COUNTER=`expr $ARR_COUNTER + 1`
     done
+		
   done
   echo "$CORREL_ID\n${SRC_PATH}/${SRC_NAME_ONLY}\n$SRC_MSG\n$TOTAL\nDELIMITER"
   TOTAL=''
 done
 rm ~/.sudopass
-sleep 1
-rm -rf ~/transfer_temp
+# Removed download feature
+	# sleep 1
+	# rm -rf ~/transfer_temp

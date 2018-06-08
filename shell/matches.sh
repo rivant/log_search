@@ -13,8 +13,9 @@ ADAPTER_HOME=`printenv HOME`
 REGION_PATTERN='s/[[:alpha:]-]*\([0-9]*\)[[:alnum:]]*/\1/'
 REGION_NAMES=`ls $ADAPTER_HOME/REGION`
 
-# Download cleanup
-find files -type f -mmin +240 | xargs rm
+# Removed download feature
+	# Download cleanup
+	# find files -type f -mmin +240 | xargs rm
 
 # Search point for sources
 SRC_REGION_NUM=`echo $SOURCE | sed $REGION_PATTERN`
@@ -45,7 +46,7 @@ fi
 DEST_DATE_MATCHES=`find $DEST_PATH -type f -mtime +$END_TIME ! -mtime +$START_TIME | grep $DEST_LOG | sort -r`
 
 # Find $SOURCE files in date range.  Return file name and line number of $SEARCH
-# Filter out Ack Messages, and search criteria outside of a message
+# Filter out Ack Messages, and any search criteria outside of an hl7 message
 if [ `ls $SRC_PATH 2>/dev/null | wc -l` != 0 ]; then
    SRC_MATCHES=`find $SRC_PATH -type f -mtime +$END_TIME ! -mtime +$START_TIME | grep "${SOURCE}_SOURCE.log" | sort -r | xargs zgrep -n $SEARCH /dev/null | grep -v "MSA|" | grep "MSH|" | cut -d: -f1-2`
    if [[ -z $SRC_MATCHES ]]; then
@@ -63,9 +64,10 @@ do
    SRC_LINE_NUM=`echo $SRC_ENTRY | cut -d: -f2`
    SRC_FILE_NAME=`echo $SRC_ENTRY | cut -f1 -d:`
 
-   # Make file available for download
-   SRC_NAME_ONLY=`echo $SRC_FILE_NAME | rev | cut -d/ -f1 | rev | sed 's/.gz/.log/g'`
-   zgrep -e "[:alnum::blank:]*" $SRC_FILE_NAME > files/$SRC_NAME_ONLY
+	 # Removed download feature, but keep $SRC_NAME_ONLY
+		 # Make file available for download
+		 SRC_NAME_ONLY=`echo $SRC_FILE_NAME | rev | cut -d/ -f1 | rev | sed 's/.gz/.log/g'`
+		 # zgrep -e "[:alnum::blank:]*" $SRC_FILE_NAME > files/$SRC_NAME_ONLY
 
 	 # Get Message + message info
    SRC_MSG=`zgrep -e "[:alnum::blank:]*" $SRC_FILE_NAME | sed "${SRC_LINE_NUM},/COREL ID/!d"`   
@@ -81,9 +83,10 @@ do
 				continue
 			fi
 			
-			# Make file available for download
-      DST_NAME_ONLY=`echo $DEST_NAME | rev | cut -d/ -f1 | rev | sed 's/gz/log/g'`
-      zgrep -e "[:alnum::blank:]*" $DEST_NAME > files/$DST_NAME_ONLY
+			# Removed download feature
+				# Make file available for download
+				# DST_NAME_ONLY=`echo $DEST_NAME | rev | cut -d/ -f1 | rev | sed 's/.gz/.log/g'`
+				# zgrep -e "[:alnum::blank:]*" $DEST_NAME > files/$DST_NAME_ONLY
 					
       until [[ $ARR_COUNTER -gt $ARR_LENGTH ]]
       do
