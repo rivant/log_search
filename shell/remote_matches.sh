@@ -6,11 +6,15 @@ SOURCE=$1
 SEARCH=$2
 END_TIME=$3
 START_TIME=$4
-PW=$5
-DEST=$6
+KEY=$5
+EPASS=$6
+DEST=$7
+
+# Decrypt
+DPASS=`echo "$EPASS" | openssl enc -aes-128-cbc -a -d -pass pass:"$KEY"`
 
 # Remote access
-echo "#!/bin/sh\necho $PW" > ~/.sudopass
+echo "#!/bin/sh\necho $DPASS" > ~/.sudopass
 chmod 700 ~/.sudopass
 export SUDO_ASKPASS=~/.sudopass
 mkdir -p ~/transfer_temp

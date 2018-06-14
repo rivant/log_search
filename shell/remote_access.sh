@@ -5,16 +5,18 @@ set Source [lindex $argv 2]
 set Pattern [lindex $argv 3]
 set End_Time [lindex $argv 4]
 set Start_Time [lindex $argv 5]
-set tempTitle [lindex $argv 6]
-set Dest [lindex $argv 7]
+set tempKey [lindex $argv 6]
+set ePass [lindex $argv 7]
+set Dest [lindex $argv 8]
 set Script shell/remote_matches.sh
-set timeout 90
+#set timeout 30
+set dPass [exec echo $ePass | openssl enc -aes-128-cbc -a -d -pass pass:$env($tempKey)]
 
-spawn -noecho ksh93 -c "ssh -o StrictHostKeyChecking=no $ID@$IP ksh93 -s < $Script $Source $Pattern $End_Time $Start_Time $env($tempTitle) $Dest"
+spawn -noecho ksh93 -c "ssh -o StrictHostKeyChecking=no $ID@$IP ksh93 -s < $Script $Source $Pattern $End_Time $Start_Time $env($tempKey) $ePass $Dest"
 
 log_user 0
 expect "eDir Password:"
-send "$env($tempTitle)\r"
+send "$dPass\r"
 log_user 1
 
 expect eof
