@@ -7,8 +7,14 @@ SEARCH=$2
 END_TIME=$3
 START_TIME=$4
 KEY=$5
-EPASS=$6
-DEST=$7
+DEST=$6
+EPASS=$7
+
+# Check if empty $DEST for argument position shift
+if [[ -z $EPASS ]]; then
+	EPASS=$DEST
+	DEST=''
+fi
 
 # Decrypt
 DPASS=`echo "$EPASS" | openssl enc -aes-128-cbc -a -d -pass pass:"$KEY"`
