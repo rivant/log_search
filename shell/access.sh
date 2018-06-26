@@ -8,7 +8,7 @@ set Start_Time [lindex $argv 5]
 set tempKey [lindex $argv 6]
 set Dest [lindex $argv 7]
 set ePass [lindex $argv 8]
-set Script shell/remote_matches.sh
+set Script shell/matches.sh
 set timeout 90
 set dPass [exec echo $ePass | openssl enc -aes-128-cbc -a -d -pass pass:$env($tempKey)]
 

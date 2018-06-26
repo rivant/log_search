@@ -1,90 +1,87 @@
 <!doctype html>
 <html lang="en">
 <head>
-   <meta charset="utf-8">
-   <title>HL7 Message Search</title>
-   <link rel="stylesheet" href="stylesheets/jquery-ui.css">
-   <link rel="stylesheet" href="stylesheets/style.css">
-   <script src="javascripts/jquery-3.2.1.min.js"></script>
-   <script src="javascripts/jquery-ui-1.12.1.js"></script>
-   <script src="javascripts/dropdowns.js"></script>
-   <style>
-     .destMatch {
-       color: #770177;
-			}
-			li {
-				list-style: none;
-			}
-   </style>
+  <meta charset="utf-8">
+  <title>HL7 Message Search</title>
+  <link rel="stylesheet" href="stylesheets/jquery-ui.css">
+  <link rel="stylesheet" href="stylesheets/style.css">
+  <script src="javascripts/jquery-3.2.1.min.js"></script>
+  <script src="javascripts/jquery-ui-1.12.1.js"></script>
+  <script src="javascripts/dropdowns.js"></script>
+  <style>
+    .destMatch {
+      color: #770177;
+		}
+		li {
+			list-style: none;
+		}
+  </style>
 </head>
 
 <body>
-   <h2>Find Correlating Messages in Logs</h2>
-	 <div style='display: inline-block'>
-   <form method="post" action="/">
-      <select id="server_select" name="Server">
-         <option value="10.248.202.25">UAT Server</option>
-         <option value="10.248.205.20">Staging 1 (AZNEV)</option>
-         <option value="10.248.204.20">Staging 2 (SACTO)</option>
-         <option value="10.248.203.20">Staging 3 (BAY)</option>
-         <option value="10.248.206.20">Staging 4 (LAWMIX)</option>
-         <option value="10.248.207.20">Staging 5 (SOCAL)</option>
-         <option value="10.248.208.20">Staging 6 (EHR)</option>
-         <option value="10.248.209.140">Staging 7 (CXNG)</option>
-         <option value="10.248.209.142">Staging 8 (CXNH)</option>
-      </select>
-      <div id="credentials" style="<%= content.credDisplay %>">
-         <span class="cred_label" id="one_off">User ID</span>
-         <input class="cred_input" type="text" name="UserId" maxLength="30" value="<%= content.params.UserId %>" style="<%= content.borderUserId %>" />
-         <span class="cred_label">Password</span>
-         <input class="cred_input" type="password" name="Password" maxLength="40" value="<%= content.params.Password %>" style="<%= content.borderPassword %>" />
-      </div>
+  <h2>CXN Log Search</h2>
+	<div style='display: inline-block'>
+  <form method="post" action="/">
+    <select id="server_select" name="Server">
+			<option value="10.248.202.24">Dev Server</option>
+      <option value="10.248.202.25">UAT Server</option>			
+      <option value="10.248.205.20">Stage 1 (AZNEV)</option>
+      <option value="10.248.204.20">Stage 2 (SACTO)</option>
+      <option value="10.248.203.20">Stage 3 (BAY)</option>
+      <option value="10.248.206.20">Stage 4 (LAWMIX)</option>
+      <option value="10.248.207.20">Stage 5 (SOCAL)</option>
+      <option value="10.248.208.20">Stage 6 (EHR)</option>
+      <option value="10.248.209.140">Stage 7 (CXNG) phxscxn013</option>
+      <option value="10.248.209.142">Stage 8 (CXNH) phxscxn015</option>
+    </select>
+		
+    <div id="credentials">
+      <span class="cred_label" id="one_off">User ID</span>
+      <input class="cred_input" type="text" name="UserId" maxLength="30" value="<%= content.params.UserId %>" style="<%= content.borderUserId %>" />
+      <span class="cred_label">Password</span>
+      <input class="cred_input" type="password" name="Password" maxLength="40" value="<%= content.params.Password %>" style="<%= content.borderPassword %>" />
+    </div>
 			
-      <br/>
+    <br/>
  
-      <span class="labels">Source Adapter</span>
-      <span class="labels">Destination Adapter</span>
-      <span class="labels">Search For</span><br/>
-      <input id="source" class="search-form" name="Source" maxLength="20" value="<%= content.params.Source %>" style="<%= content.borderSource %>" />
-      <input id="dest" class="search-form" name="Dest" maxLength="20" value="<%= content.params.Dest %>" />
-      <input class="search-form" name="Pattern" maxLength="30" value="<%= content.params.Pattern %>" style="<%= content.borderPattern %>" />			
-      <br/>
-      <span class="dateLabel">Start Date</span>
-      <input class="dates search" type="date" id="startDate" name="Start" value="<%= content.params.Start || util.today() %>" />
-      <span class="dateLabel">End Date</span>
-      <input class="dates search" type="date" id="endDate" name="End" value="<%= content.params.End || util.today() %>" />
-      <br/><br/>
-      <input type="submit" value="Submit" /></form><br/>
-      <br/>
-   </form>
-	 </div>
+    <span class="labels">Source Adapter</span>
+    <span class="labels">Destination Adapter</span>
+    <span class="labels">Search For</span><br/>
+    <input id="source" class="search-form" name="Source" maxLength="20" value="<%= content.params.Source %>" style="<%= content.borderSource %>" />
+    <input id="dest" class="search-form" name="Dest" maxLength="20" value="<%= content.params.Dest %>" />
+    <input class="search-form" name="Pattern" maxLength="30" value="<%= content.params.Pattern %>" style="<%= content.borderPattern %>" />			
+    <br/>
+    <span class="dateLabel">Start Date</span>
+    <input class="dates search" type="date" id="startDate" name="Start" value="<%= content.params.Start || util.today() %>" />
+    <span class="dateLabel">End Date</span>
+    <input class="dates search" type="date" id="endDate" name="End" value="<%= content.params.End || util.today() %>" />
+    <br/><br/>
+    <input type="submit" value="Submit" /></form><br/>
+    <br/>
+  </form>
+	</div>
 	 
-	 <div id='reference-block'>
-			<h4 id='reference-title'>Adapter Naming References</h4>
-			<a href='https://apps.dignityhealth.org/connexionsupporttool/#!/reference/applications' target='_blank'>Apps</a><br/>
-			<a href='https://apps.dignityhealth.org/connexionsupporttool/#!/reference/regionList' target='_blank'>Regions</a><br/>
-			<label>Syntax: Application Name + Region Number + Message Type</label><br/>
-			<label>Example: Initiate + Sacramento + ADT and Scheduling = INI30MIX</label>
-		</div>
+	<div id='reference-block'>
+		<h4 id='reference-title'>Adapter Naming References</h4>
+		<a href='https://apps.dignityhealth.org/connexionsupporttool/#!/reference/applications' target='_blank'>Apps</a><br/>
+		<a href='https://apps.dignityhealth.org/connexionsupporttool/#!/reference/regionList' target='_blank'>Regions</a><br/>
+		<label>Syntax: Application Name + Region Number + Message Type</label><br/>
+		<label>Example: Initiate + Sacramento + ADT and Scheduling = INI30MIX</label>
+	</div>
 
-   <div class="totals" style=<%= content.totalDisplay %>>
-      <span>Total Source Matches: </span><span id="srcCount"><%= content.srcTotal %></span><br/>
-      <span>Total Destination Correlations: </span><span id="dstCount"><%= content.dstTotal %></span>
-   </div>
-   
-   <pre style="<%= content.msgDisplay %>" id="msg-window"><%= content.msg %>
+  <div class="totals" style=<%= content.totalDisplay %>>
+    <span>Total Source Matches: </span><span id="srcCount"><%= content.srcTotal %></span><br/>
+    <span>Total Destination Correlations: </span><span id="dstCount"><%= content.dstTotal %></span>
+  </div>
+  
+  <pre style="<%= content.msgDisplay %>" id="msg-window"><%= content.msg %>
 
 </body>
 <script>
-   $('#server_select').val('<%= content.params.Server %>');
-   $('#server_select').on('change', function(){
-      if ($(this).val() !== '10.248.202.25'){
-         $('#credentials').css('visibility', 'visible');
-         $("input[name='UserId']").focus();
-      } else {
-         $('#credentials').css('visibility', 'hidden');
-      }
-   });
+  $('#server_select').val('<%= content.params.Server %>');
+  $('#server_select').on('change', function(){    
+    $("input[name='UserId']").focus();
+  });
 	 
 	var srcArr = "<%= script.regionSrcList() %>".split(',');
 	var dstArr = "<%= script.regionDstList() %>".split(',');
