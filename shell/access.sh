@@ -11,12 +11,26 @@ set ePass [lindex $argv 8]
 set Script shell/matches.sh
 set timeout 90
 set dPass [exec echo $ePass | openssl enc -aes-128-cbc -a -d -pass pass:$env($tempKey)]
+set try 0
 
 spawn -noecho ksh93 -c "ssh -o StrictHostKeyChecking=no $ID@$IP ksh93 -s < $Script $Source $Pattern $End_Time $Start_Time $env($tempKey) ${Dest} $ePass"
 
 log_user 0
-expect "eDir Password:"
-send "$dPass\r"
-log_user 1
 
-expect eof
+expect {
+	"Password:" {
+		if { $try == 1 } {
+			send_error " Cannot login, invalid username or password\n"
+			exit 1
+		}
+		
+		send "$dPass\r"
+		incr try
+		log_user 1
+		exp_continue
+	}
+	
+	eof {
+		# Success
+	}
+}
