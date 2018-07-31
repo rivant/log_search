@@ -43,7 +43,11 @@ if [[ -n $DEST ]]; then
    DEST_PATH="${ADAPTER_HOME}/REGION/$DEST_REGION_NAME/LOG"
    DEST_LOG="${DEST}_DEST.log"	 
 else
-  DOWNSTREAM=`${SECURITY[@]} cat ${ADAPTER_HOME}/REGION/$SRC_REGION_NAME/CONFIG/${SRC_REGION_NAME}Adapter.xml | sed "/${SOURCE}_SOURCE/,/<\/destinations>/!d" | grep '<destID>' | sed 's/.*>\([A-Z0-9-]*\)<.*/\1/'`
+	DOWNSTREAM=`${SECURITY[@]} cat ${ADAPTER_HOME}/REGION/$SRC_REGION_NAME/CONFIG/${SRC_REGION_NAME}Adapter.xml | sed "/${SOURCE}_SOURCE/,/<\/destinations>/!d" | grep '<destID>' | sed 's/.*>\([A-Z0-9-]*\)<.*/\1/'`	
+	if [[ -z $DOWNSTREAM ]]; then
+		echo Cannot find entry for ${SOURCE}_SOURCE in ${SRC_REGION_NAME}Adapter.xml to determine destinations.  Try specifying a destination.
+		exit 1
+	fi
 	NUM_CHECK=''
 	for adapter in $DOWNSTREAM
 	do
@@ -65,8 +69,9 @@ else
 		DEST_PATH="$DEST_PATH ${ADAPTER_HOME}/REGION/$DEST_REGION_NAME/LOG"		
 	done
 	DEST_LOG="_DEST.log"
-fi
+fi 
 DEST_DATE_MATCHES=`${SECURITY[@]} find $DEST_PATH -type f -mtime +$END_TIME ! -mtime +$START_TIME | grep $DEST_LOG | sort -r`
+
 
 # Find $SOURCE files in date range.  Return file name and line number of $SEARCH
 # Filter out Ack Messages, and any search criteria outside of an hl7 message
