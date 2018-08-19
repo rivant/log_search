@@ -23,7 +23,10 @@ if [[ `uname -n` != phxc* ]]; then
 	DPASS=`echo "$EPASS" | openssl enc -aes-128-cbc -a -d -pass pass:"$KEY"`
 	echo "#!/bin/sh\necho $DPASS" > ~/.sudopass
 	chmod 700 ~/.sudopass
-	export SUDO_ASKPASS=~/.sudopass	
+	export SUDO_ASKPASS=~/.sudopass
+	CLEANUP='rm ~/.sudopass'
+else
+	sudo -u \#800 -i "SECURITY=$SECURITY" "SOURCE=$SOURCE" "SEARCH=$SEARCH" "END_TIME=$END_TIME" "START_TIME=$START_TIME" "DEST=$DEST"
 fi
 
 # Common variables
@@ -45,7 +48,7 @@ if [[ -n $DEST ]]; then
 else
 	DOWNSTREAM=`${SECURITY[@]} cat ${ADAPTER_HOME}/REGION/$SRC_REGION_NAME/CONFIG/${SRC_REGION_NAME}Adapter.xml | sed "/${SOURCE}_SOURCE/,/<\/destinations>/!d" | grep '<destID>' | sed 's/.*>\([A-Z0-9-]*\)<.*/\1/'`	
 	if [[ -z $DOWNSTREAM ]]; then
-		echo Cannot find entry for ${SOURCE}_SOURCE in ${SRC_REGION_NAME}Adapter.xml to determine destinations.  Try specifying a destination.
+		echo Unable to find entry for ${SOURCE}_SOURCE in ${SRC_REGION_NAME}Adapter.xml to determine destinations.  Try specifying a destination.
 		exit 1
 	fi
 	NUM_CHECK=''
@@ -79,11 +82,11 @@ if [ `${SECURITY[@]} ls $SRC_PATH 2>/dev/null | wc -l` != 0 ]; then
   SRC_MATCHES=`${SECURITY[@]} find $SRC_PATH -type f -mtime +$END_TIME ! -mtime +$START_TIME | grep "${SOURCE}_SOURCE.log" | sort -r | xargs ${SECURITY[@]} zgrep -n $SEARCH /dev/null | grep -v "MSA|" | grep "MSH|" | cut -f1-2 -d:`
 	
   if [[ -z $SRC_MATCHES ]]; then
-    printf "Cannot find $SEARCH in $SOURCE Source Log Messages." 1>&2
+    printf "Unable to find $SEARCH in $SOURCE Source Log Messages." 1>&2
     exit 1
   fi
 else
-  printf "Cannot find $SRC_PATH\n" 1>&2
+  printf "Unable to find $SRC_PATH\n" 1>&2
   exit 1
 fi
 
@@ -96,7 +99,7 @@ do
        
   # Get Message + message info
 	SRC_MSG=`${SECURITY[@]} zgrep "[[:alnum:]]*" $SRC_FILE_NAME | sed "${SRC_LINE_NUM},/COREL ID/!d"`		
-  CORREL_ID=`echo $SRC_MSG | sed 's/.* COREL ID = \([A-Z0-9]*\) .*/\1/'`
+  CORREL_ID=`echo $SRC_MSG | sed 's/.* COREL ID = \([A-Z0-9]*\) .*/\1/'`	
 
   for DEST_NAME in $DEST_DATE_MATCHES
   do
@@ -126,6 +129,7 @@ do
 		
   done
   echo "$CORREL_ID\n${SRC_PATH}/${SRC_NAME_ONLY}\n$SRC_MSG\n$TOTAL\nDELIMITER"
+	echo "$CORREL_ID\n${SRC_PATH}/${SRC_NAME_ONLY}\n$SRC_MSG\n$TOTAL\nDELIMITER" > test.txt
   TOTAL=''
 done
-rm ~/.sudopass
+$CLEANUP

@@ -20,7 +20,7 @@ log_user 0
 expect {
 	"Password:" {
 		if { $try == 1 } {
-			send_error " Cannot login, invalid username or password\n"
+			send_error " Unable to login, invalid username or password\n"
 			exit 1
 		}
 		
