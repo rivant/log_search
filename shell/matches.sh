@@ -18,13 +18,14 @@ fi
 
 # check if sudo needed
 SECURITY=("")
+CLEANUP=("")
 if [[ `uname -n` != phxc* ]]; then  
 	SECURITY=(sudo -Au \#800)
 	DPASS=`echo "$EPASS" | openssl enc -aes-128-cbc -a -d -pass pass:"$KEY"`
 	echo "#!/bin/sh\necho $DPASS" > ~/.sudopass
 	chmod 700 ~/.sudopass
 	export SUDO_ASKPASS=~/.sudopass
-	CLEANUP='rm ~/.sudopass'
+	CLEANUP=(rm ~/.sudopass)
 else
 	sudo -u \#800 -i "SECURITY=$SECURITY" "SOURCE=$SOURCE" "SEARCH=$SEARCH" "END_TIME=$END_TIME" "START_TIME=$START_TIME" "DEST=$DEST"
 fi
@@ -129,7 +130,6 @@ do
 		
   done
   echo "$CORREL_ID\n${SRC_PATH}/${SRC_NAME_ONLY}\n$SRC_MSG\n$TOTAL\nDELIMITER"
-	echo "$CORREL_ID\n${SRC_PATH}/${SRC_NAME_ONLY}\n$SRC_MSG\n$TOTAL\nDELIMITER" > test.txt
   TOTAL=''
 done
-$CLEANUP
+`${CLEANUP[@]}`
