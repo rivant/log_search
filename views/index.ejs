@@ -3,15 +3,13 @@
 <head>
   <meta charset="utf-8">
   <title>HL7 Message Search</title>
-  <link rel="stylesheet" href="stylesheets/jquery-ui.css">
   <link rel="stylesheet" href="stylesheets/style.css">
   <script src="javascripts/jquery-3.2.1.min.js"></script>
-  <script src="javascripts/jquery-ui-1.12.1.js"></script>
-  <script src="javascripts/dropdowns.js"></script>
+  <script src="javascripts/autocomplete.js"></script>
   <style>
     .destMatch {
       color: #770177;
-		}		
+		}
   </style>
 </head>
 
@@ -21,7 +19,7 @@
   <form method="post" action="/">
     <select id="server_select" name="Server">
 			<option value="10.248.202.24">Dev Server</option>
-      <option value="10.248.202.25">UAT Server</option>			
+      <option value="10.248.202.25">UAT Server</option>	
       <option value="10.248.205.20">Stage 1 (AZNEV)</option>
       <option value="10.248.204.20">Stage 2 (SACTO)</option>
       <option value="10.248.203.20">Stage 3 (BAY)</option>
@@ -31,33 +29,41 @@
       <option value="10.248.209.140">Stage 7 (CXNG)</option>
       <option value="10.248.209.142">Stage 8 (CXNH)</option>
     </select>
-		
+
     <div id="credentials">
       <span class="cred_label" id="one_off">User ID</span>
       <input class="cred_input" type="text" name="UserId" maxLength="30" value="<%= content.params.UserId %>" style="<%= content.borderUserId %>" />
       <span class="cred_label">Password</span>
       <input class="cred_input" type="password" name="Password" maxLength="40" value="<%= content.params.Password %>" style="<%= content.borderPassword %>" />
     </div>
-			
+
     <br/>
- 
+
     <span class="labels">Source Adapter</span>
     <span class="labels">Destination Adapter</span>
     <span class="labels">Search For</span><br/>
-    <input id="source" class="search-form" name="Source" maxLength="20" value="<%= content.params.Source %>" style="<%= content.borderSource %>" />
-    <input id="dest" class="search-form" name="Dest" maxLength="20" value="<%= content.params.Dest %>" />
-    <input class="search-form" name="Pattern" maxLength="30" value="<%= content.params.Pattern %>" style="<%= content.borderPattern %>" />			
+		<div class="autocomplete">
+			<input id="source" class="search-form" name="Source" maxLength="20" autocomplete="off" value="<%= content.params.Source %>" style="<%= content.borderSource %>" />
+		</div>
+		<div class="autocomplete" autocomplete="off">
+			<input id="dest" class="search-form" name="Dest" maxLength="20" autocomplete="off" value="<%= content.params.Dest %>" />
+		</div>
+    <input class="search-form" name="Pattern" maxLength="30" value="<%= content.params.Pattern %>" style="<%= content.borderPattern %>" />
+
     <br/>
+
     <span class="dateLabel">Start Date</span>
     <input class="dates search" type="date" id="startDate" name="Start" value="<%= content.params.Start || util.today() %>" />
     <span class="dateLabel">End Date</span>
     <input class="dates search" type="date" id="endDate" name="End" value="<%= content.params.End || util.today() %>" />
+
     <br/><br/>
+
     <input type="submit" value="Submit" /></form><br/>
     <br/>
   </form>
 	</div>
-	 
+
 	<div id='reference-block'>
 		<h4 id='reference-title'>Adapter Naming References</h4>
 		<a href='https://apps.dignityhealth.org/connexionsupporttool/#!/reference/applications' target='_blank'>Apps</a><br/>
@@ -80,9 +86,30 @@
     $("input[name='UserId']").focus();
   });
 	 
-	var srcArr = "<%= script.regionSrcList() %>".split(',');
-	var dstArr = "<%= script.regionDstList() %>".split(',');
-	adapterLists(srcArr, dstArr);
+	var srcArr = [];
+  var dstArr = [];
+
+	var xhrSrc = new XMLHttpRequest();
+	var xhrDst = new XMLHttpRequest();
+
+	xhrSrc.onreadystatechange = function(){
+		if (xhrSrc.readyState == 4 && xhrSrc.status == 200){
+			srcArr = xhrSrc.responseText.split(',');
+			autocomplete(document.getElementById('source'), srcArr);
+		}
+	};
+	xhrDst.onreadystatechange = function(){
+		if (xhrDst.readyState == 4 && xhrDst.status == 200){
+			dstArr = xhrDst.responseText.split(',');
+			autocomplete(document.getElementById('dest'), dstArr);
+		}
+	};
+
+	xhrSrc.open("GET", "/srclist");
+	xhrSrc.send();
+
+	xhrDst.open("GET", "/dstlist");
+	xhrDst.send();
 </script>
 
 </html>
