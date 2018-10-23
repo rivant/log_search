@@ -1,4 +1,4 @@
 #!/bin/sh
 
-# Get region and source logs
-find ~/REGION -type f | grep -e "SOURCE.log$" | tr '\n' ','
+# Get source logs
+ls -R ~/REGION | grep -e "SOURCE.log$" | cut -d. -f1 | tr '\n' ','

@@ -11,7 +11,9 @@ var index = require('./routes/index'),
     util = require('./lib/utils'),
     content = require('./lib/content'),
     search = require('./lib/search'),
-    script = require('./lib/scripts');
+    script = require('./lib/scripts'),
+		srcList = require('./routes/srcList'),
+		dstList = require('./routes/dstList');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -36,8 +38,8 @@ app.locals.content = content;
 app.locals.util = util;
 
 // Routes
-//app.use('/', index);
-//app.use('/users', users);
+app.use('/srclist', srcList);
+app.use('/dstlist', dstList);
 
 // web actions
 app.get('/', function(req, res){

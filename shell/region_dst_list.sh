@@ -1,3 +1,3 @@
 #!/bin/sh
 
-find ~/REGION -type f | grep -e "DEST.log$" | tr '\n' ','
+ls -R ~/REGION | grep -e "DEST.log$" | cut -d. -f1 | tr '\n' ','
