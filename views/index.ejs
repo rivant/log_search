@@ -9,13 +9,13 @@
   <style>
     .destMatch {
       color: #770177;
-		}
+    }
   </style>
 </head>
 
 <body>
   <h2>CXN Log Search</h2>
-	<div style='display: inline-block'>
+  <div style='display: inline-block'>
   <form method="post" action="/">
     <select id="server_select" name="Server">
 			<option value="10.248.202.24">Dev Server</option>
@@ -42,12 +42,12 @@
     <span class="labels">Source Adapter</span>
     <span class="labels">Destination Adapter</span>
     <span class="labels">Search For</span><br/>
-		<div class="autocomplete">
-			<input id="source" class="search-form" name="Source" maxLength="20" autocomplete="off" value="<%= content.params.Source %>" style="<%= content.borderSource %>" />
-		</div>
-		<div class="autocomplete" autocomplete="off">
-			<input id="dest" class="search-form" name="Dest" maxLength="20" autocomplete="off" value="<%= content.params.Dest %>" />
-		</div>
+    <div class="autocomplete">
+      <input id="source" class="search-form" name="Source" maxLength="20" autocomplete="off" value="<%= content.params.Source %>" style="<%= content.borderSource %>" />
+    </div>
+    <div class="autocomplete" autocomplete="off">
+      <input id="dest" class="search-form" name="Dest" maxLength="20" autocomplete="off" value="<%= content.params.Dest %>" />
+    </div>
     <input class="search-form" name="Pattern" maxLength="30" value="<%= content.params.Pattern %>" style="<%= content.borderPattern %>" />
 
     <br/>
@@ -62,15 +62,15 @@
     <input type="submit" value="Submit" /></form><br/>
     <br/>
   </form>
-	</div>
+  </div>
 
-	<div id='reference-block'>
-		<h4 id='reference-title'>Adapter Naming References</h4>
-		<a href='https://apps.dignityhealth.org/connexionsupporttool/#!/reference/applications' target='_blank'>Apps</a><br/>
-		<a href='https://apps.dignityhealth.org/connexionsupporttool/#!/reference/regionList' target='_blank'>Regions</a><br/>
-		<label>Syntax: Application Name + Region Number + Message Type</label><br/>
-		<label>Example: Initiate + Sacramento + ADT and Scheduling = INI30MIX</label>
-	</div>
+  <div id='reference-block'>
+    <h4 id='reference-title'>Adapter Naming References</h4>
+    <a href='https://apps.dignityhealth.org/connexionsupporttool/#!/reference/applications' target='_blank'>Apps</a><br/>
+    <a href='https://apps.dignityhealth.org/connexionsupporttool/#!/reference/regionList' target='_blank'>Regions</a><br/>
+    <label>Syntax: Application Name + Region Number + Message Type</label><br/>
+    <label>Example: Initiate + Sacramento + ADT and Scheduling = INI30MIX</label>
+  </div>
 
   <div class="totals" style=<%= content.totalDisplay %>>
     <span>Total Source Matches: </span><span id="srcCount"><%= content.srcTotal %></span><br/>
@@ -86,30 +86,29 @@
     $("input[name='UserId']").focus();
   });
 	 
-	var srcArr = [];
+  var srcArr = [];
   var dstArr = [];
 
-	var xhrSrc = new XMLHttpRequest();
-	var xhrDst = new XMLHttpRequest();
+  var xhrSrc = new XMLHttpRequest();
+  var xhrDst = new XMLHttpRequest();
 
-	xhrSrc.onreadystatechange = function(){
-		if (xhrSrc.readyState == 4 && xhrSrc.status == 200){
-			srcArr = xhrSrc.responseText.split(',');
-			autocomplete(document.getElementById('source'), srcArr);
-		}
-	};
-	xhrDst.onreadystatechange = function(){
-		if (xhrDst.readyState == 4 && xhrDst.status == 200){
-			dstArr = xhrDst.responseText.split(',');
-			autocomplete(document.getElementById('dest'), dstArr);
-		}
-	};
-
-	xhrSrc.open("GET", "/srclist");
-	xhrSrc.send();
-
-	xhrDst.open("GET", "/dstlist");
-	xhrDst.send();
+  xhrSrc.onreadystatechange = function(){
+    if (xhrSrc.readyState == 4 && xhrSrc.status == 200){
+      srcArr = xhrSrc.responseText.split(',');
+      autocomplete(document.getElementById('source'), srcArr);
+    }
+  };
+  xhrDst.onreadystatechange = function(){
+    if (xhrDst.readyState == 4 && xhrDst.status == 200){
+  	dstArr = xhrDst.responseText.split(',');
+  	autocomplete(document.getElementById('dest'), dstArr);
+    }
+  };
+  
+  xhrSrc.open("GET", "/srclist");
+  xhrSrc.send();
+  
+  xhrDst.open("GET", "/dstlist");
+  xhrDst.send();
 </script>
-
 </html>
