@@ -65,6 +65,10 @@ body {
    margin-left: 12px;
    text-align: right;
 }
+.destMatch {
+  color: #770177;
+}
+
 h2 {
    color: #0e5b96;
 }
