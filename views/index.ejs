@@ -6,35 +6,30 @@
   <link rel="stylesheet" href="stylesheets/style.css">
   <script src="javascripts/jquery-3.2.1.min.js"></script>
   <script src="javascripts/autocomplete.js"></script>
-  <style>
-    .destMatch {
-      color: #770177;
-    }
-  </style>
 </head>
 
 <body>
   <h2>CXN Log Search</h2>
   <div style='display: inline-block'>
   <form method="post" action="/">
-    <select id="server_select" name="Server">
-			<option value="10.248.202.24">Dev Server</option>
-      <option value="10.248.202.25">UAT Server</option>	
-      <option value="10.248.205.20">Stage 1 (AZNEV)</option>
-      <option value="10.248.204.20">Stage 2 (SACTO)</option>
-      <option value="10.248.203.20">Stage 3 (BAY)</option>
-      <option value="10.248.206.20">Stage 4 (LAWMIX)</option>
-      <option value="10.248.207.20">Stage 5 (SOCAL)</option>
-      <option value="10.248.208.20">Stage 6 (EHR)</option>
-      <option value="10.248.209.140">Stage 7 (CXNG)</option>
-      <option value="10.248.209.142">Stage 8 (CXNH)</option>
+    <select id="server_select" name="serverIP">
+      <option value="10.248.202.24:dev">Dev Server</option>
+      <option value="10.248.202.25:uat">UAT Server</option>	
+      <option value="10.248.205.20:stage">Stage 1 (AZNEV)</option>
+      <option value="10.248.204.20:stage">Stage 2 (SACTO)</option>
+      <option value="10.248.203.20:stage">Stage 3 (BAY)</option>
+      <option value="10.248.206.20:stage">Stage 4 (LAWMIX)</option>
+      <option value="10.248.207.20:stage">Stage 5 (SOCAL)</option>
+      <option value="10.248.208.20:stage">Stage 6 (EHR)</option>
+      <option value="10.248.209.140:stage">Stage 7 (CXNG)</option>
+      <option value="10.248.209.142:stage">Stage 8 (CXNH)</option>
     </select>
 
     <div id="credentials">
       <span class="cred_label" id="one_off">User ID</span>
-      <input class="cred_input" type="text" name="UserId" maxLength="30" value="<%= content.params.UserId %>" style="<%= content.borderUserId %>" />
+      <input class="cred_input" type="text" name="userID" maxLength="30" value="<%= content.params.userID %>" style="<%= content.borderUserId %>" />
       <span class="cred_label">Password</span>
-      <input class="cred_input" type="password" name="Password" maxLength="40" value="<%= content.params.Password %>" style="<%= content.borderPassword %>" />
+      <input class="cred_input" type="password" name="password" maxLength="40" value="<%= content.params.password %>" style="<%= content.borderPassword %>" />
     </div>
 
     <br/>
@@ -43,19 +38,19 @@
     <span class="labels">Destination Adapter</span>
     <span class="labels">Search For</span><br/>
     <div class="autocomplete">
-      <input id="source" class="search-form" name="Source" maxLength="20" autocomplete="off" value="<%= content.params.Source %>" style="<%= content.borderSource %>" />
+      <input id="source" class="search-form" name="source" maxLength="20" autocomplete="off" value="<%= content.params.source %>" style="<%= content.borderSource %>" />
     </div>
     <div class="autocomplete" autocomplete="off">
-      <input id="dest" class="search-form" name="Dest" maxLength="20" autocomplete="off" value="<%= content.params.Dest %>" />
+      <input id="dest" class="search-form" name="dest" maxLength="20" autocomplete="off" value="<%= content.params.dest %>" />
     </div>
-    <input class="search-form" name="Pattern" maxLength="30" value="<%= content.params.Pattern %>" style="<%= content.borderPattern %>" />
+    <input class="search-form" name="pattern" maxLength="30" value="<%= content.params.pattern %>" style="<%= content.borderPattern %>" />
 
     <br/>
 
     <span class="dateLabel">Start Date</span>
-    <input class="dates search" type="date" id="startDate" name="Start" value="<%= content.params.Start || util.today() %>" />
+    <input class="dates search" type="date" id="startDate" name="start" value="<%= content.params.start || util.today() %>" />
     <span class="dateLabel">End Date</span>
-    <input class="dates search" type="date" id="endDate" name="End" value="<%= content.params.End || util.today() %>" />
+    <input class="dates search" type="date" id="endDate" name="end" value="<%= content.params.end || util.today() %>" />
 
     <br/><br/>
 
@@ -81,9 +76,9 @@
 
 </body>
 <script>
-  $('#server_select').val('<%= content.params.Server %>');
+  $('#server_select').val('<%= content.params.serverIP %>');
   $('#server_select').on('change', function(){    
-    $("input[name='UserId']").focus();
+    $("input[name='userID']").focus();
   });
 	 
   var srcArr = [];
