@@ -4,7 +4,7 @@ const fs = require('fs');
 
 /* GET Source Adapters */
 router.get('/', function(req, res, next) {
-  fs.readFile('./store/src_adapter_list.csv', 'utf8', (err, data) => {
+  fs.readFile('./store/sourceAdapterList.csv', 'utf8', (err, data) => {
     res.send(data);
   });
 });

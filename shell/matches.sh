@@ -98,7 +98,7 @@ do
   SRC_FILE_NAME=`echo $SRC_ENTRY | cut -f1 -d:`
 	SRC_NAME_ONLY=`echo $SRC_FILE_NAME | rev | cut -d/ -f1 | rev | sed 's/.gz/.log/g'`
        
-  # Get Message + message info
+  # Get Message + metadata
 	SRC_MSG=`${SECURITY[@]} zgrep "[[:alnum:]]*" $SRC_FILE_NAME | sed "${SRC_LINE_NUM},/COREL ID/!d"`		
   CORREL_ID=`echo $SRC_MSG | sed 's/.* COREL ID = \([A-Z0-9]*\) .*/\1/'`	
 

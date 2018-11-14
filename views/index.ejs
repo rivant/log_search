@@ -13,23 +13,23 @@
   <div style='display: inline-block'>
   <form method="post" action="/">
     <select id="server_select" name="serverIP">
-      <option value="10.248.202.24:dev">Dev Server</option>
-      <option value="10.248.202.25:uat">UAT Server</option>	
-      <option value="10.248.205.20:stage">Stage 1 (AZNEV)</option>
-      <option value="10.248.204.20:stage">Stage 2 (SACTO)</option>
-      <option value="10.248.203.20:stage">Stage 3 (BAY)</option>
-      <option value="10.248.206.20:stage">Stage 4 (LAWMIX)</option>
-      <option value="10.248.207.20:stage">Stage 5 (SOCAL)</option>
-      <option value="10.248.208.20:stage">Stage 6 (EHR)</option>
-      <option value="10.248.209.140:stage">Stage 7 (CXNG)</option>
-      <option value="10.248.209.142:stage">Stage 8 (CXNH)</option>
+      <option value="10.248.202.24">Dev Server</option>
+      <option value="10.248.202.25">UAT Server</option>	
+      <option value="10.248.205.20">Stage 1 (AZNEV)</option>
+      <option value="10.248.204.20">Stage 2 (SACTO)</option>
+      <option value="10.248.203.20">Stage 3 (BAY)</option>
+      <option value="10.248.206.20">Stage 4 (LAWMIX)</option>
+      <option value="10.248.207.20">Stage 5 (SOCAL)</option>
+      <option value="10.248.208.20">Stage 6 (EHR)</option>
+      <option value="10.248.209.140">Stage 7 (CXNG)</option>
+      <option value="10.248.209.142">Stage 8 (CXNH)</option>
     </select>
 
     <div id="credentials">
       <span class="cred_label" id="one_off">User ID</span>
       <input class="cred_input" type="text" name="userID" maxLength="30" value="<%= content.params.userID %>" style="<%= content.borderUserId %>" />
       <span class="cred_label">Password</span>
-      <input class="cred_input" type="password" name="password" maxLength="40" value="<%= content.params.password %>" style="<%= content.borderPassword %>" />
+      <input class="cred_input" type="password" name="userPass" maxLength="40" value="<%= content.params.userPass %>" style="<%= content.borderPassword %>" />
     </div>
 
     <br/>
@@ -95,8 +95,8 @@
   };
   xhrDst.onreadystatechange = function(){
     if (xhrDst.readyState == 4 && xhrDst.status == 200){
-  	dstArr = xhrDst.responseText.split(',');
-  	autocomplete(document.getElementById('dest'), dstArr);
+			dstArr = xhrDst.responseText.split(',');
+			autocomplete(document.getElementById('dest'), dstArr);
     }
   };
   
