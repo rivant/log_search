@@ -19,4 +19,4 @@ ADAPTER_HOME=`${SECURITY[@]} printenv HOME`
 
 # Get and return adapter names
 NAMES=`${SECURITY[@]} find $ADAPTER_HOME/REGION -type f | grep -e "Adapter.xml$" | xargs ${SECURITY[@]} grep -E "ID=.[A-Z0-9]+_.*${ADAPTER_TYPE}" | cut -d'"' -f2`
-echo $NAMES
+print $NAMES

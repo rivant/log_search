@@ -2,14 +2,14 @@
 set ID [lindex $argv 0]
 set IP [lindex $argv 1]
 set adapterType [lindex $argv 2]
-set tempKey [lindex $argv 3]
+set eKey [lindex $argv 3]
 set ePass [lindex $argv 4]
 set Script shell/adapterList.sh
 set timeout 30
-set dPass [exec echo $ePass | openssl enc -aes-128-cbc -a -d -pass pass:$env($tempKey)]
+set dPass [exec echo $ePass | openssl enc -aes-128-cbc -a -d -pass pass:$eKey]
 set try 0
 
-spawn -noecho ksh93 -c "ssh -o StrictHostKeyChecking=no $ID@$IP ksh93 -s < $Script $adapterType $env($tempKey) $ePass"
+spawn -noecho ksh93 -c "ssh -o StrictHostKeyChecking=no $ID@$IP ksh93 -s < $Script $adapterType $eKey $ePass 2>/dev/null"
 
 log_user 0
 
