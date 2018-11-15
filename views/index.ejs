@@ -6,6 +6,7 @@
   <link rel="stylesheet" href="stylesheets/style.css">
   <script src="javascripts/jquery-3.2.1.min.js"></script>
   <script src="javascripts/autocomplete.js"></script>
+	<script src="javascripts/utils.js"></script>
 </head>
 
 <body>
@@ -89,14 +90,14 @@
 
   xhrSrc.onreadystatechange = function(){
     if (xhrSrc.readyState == 4 && xhrSrc.status == 200){
-      srcArr = xhrSrc.responseText.split(',');
-      autocomplete(document.getElementById('source'), srcArr);
+      srcArr = xhrSrc.responseText.split(' ');			
+      autocomplete(document.getElementById('source'), uniqueArray(srcArr));
     }
   };
   xhrDst.onreadystatechange = function(){
     if (xhrDst.readyState == 4 && xhrDst.status == 200){
-			dstArr = xhrDst.responseText.split(',');
-			autocomplete(document.getElementById('dest'), dstArr);
+			dstArr = xhrDst.responseText.split(' ');
+			autocomplete(document.getElementById('dest'), uniqueArray(dstArr));
     }
   };
   
