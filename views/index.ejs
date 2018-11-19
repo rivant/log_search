@@ -39,7 +39,7 @@
     <span class="labels">Destination Adapter</span>
     <span class="labels">Search For</span><br/>
     <div class="autocomplete">
-      <input id="source" class="search-form" name="source" maxLength="20" autocomplete="off" value="<%= content.params.source %>" style="<%= content.borderSource %>" />
+      <input id="source" class="search-form" name="source" maxLength="25" autocomplete="off" value="<%= content.params.source %>" style="<%= content.borderSource %>" />
     </div>
     <div class="autocomplete" autocomplete="off">
       <input id="dest" class="search-form" name="dest" maxLength="20" autocomplete="off" value="<%= content.params.dest %>" />
@@ -84,19 +84,31 @@
 	 
   var srcArr = [];
   var dstArr = [];
+	var srcObj = {};
+	var dstObj = {};
 
   var xhrSrc = new XMLHttpRequest();
   var xhrDst = new XMLHttpRequest();
 
   xhrSrc.onreadystatechange = function(){
     if (xhrSrc.readyState == 4 && xhrSrc.status == 200){
-      srcArr = xhrSrc.responseText.split(' ');			
+      let lines = xhrSrc.responseText.split('\r\n');
+			lines.forEach((line) => {
+				let item = line.split(' ');
+				srcArr.push(item[0]);
+				srcObj[item[0] +'_'+ item[1]] = item[2];
+			});
       autocomplete(document.getElementById('source'), uniqueArray(srcArr));
     }
   };
   xhrDst.onreadystatechange = function(){
     if (xhrDst.readyState == 4 && xhrDst.status == 200){
-			dstArr = xhrDst.responseText.split(' ');
+			let lines = xhrDst.responseText.split('\r\n');
+			lines.forEach((line) => {
+				let item = line.split(' ');
+				dstArr.push(item[0]);
+				dstObj[item[0] +'_'+ item[1]] = item[2];
+			});
 			autocomplete(document.getElementById('dest'), uniqueArray(dstArr));
     }
   };

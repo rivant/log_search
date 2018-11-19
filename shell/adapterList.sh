@@ -1,8 +1,10 @@
 #!/bin/ksh93
 
-ADAPTER_TYPE=$1
-KEY=$2
-EPASS=$3
+IP=$1
+ROLE=$2
+ADAPTER_TYPE=$3
+KEY=$4
+EPASS=$5
 
 # Check for security type
 SECURITY=("")
@@ -13,10 +15,9 @@ if [[ `uname -n` != phxc* ]]; then
 	chmod 700 ~/.sudopass
 	export SUDO_ASKPASS=~/.sudopass
 else
-	sudo -u \#800 -i "ADAPTER_TYPE=$ADAPTER_TYPE" "SECURITY=$SECURITY"
+	sudo -u \#800 -i "IP=$IP" "ROLE=$ROLE" "ADAPTER_TYPE=$ADAPTER_TYPE" "SECURITY=$SECURITY"
 fi
 ADAPTER_HOME=`${SECURITY[@]} printenv HOME`
 
 # Get and return adapter names
-NAMES=`${SECURITY[@]} find $ADAPTER_HOME/REGION -type f | grep -e "Adapter.xml$" | xargs ${SECURITY[@]} grep -E "ID=.[A-Z0-9]+_.*${ADAPTER_TYPE}" | cut -d'"' -f2`
-print $NAMES
+${SECURITY[@]} find $ADAPTER_HOME/REGION -type f | grep -e "Adapter.xml$" | xargs ${SECURITY[@]} grep -E "ID=.[A-Z0-9]+_.*${ADAPTER_TYPE}" | cut -d'"' -f2 | xargs -I% echo % $ROLE $IP
