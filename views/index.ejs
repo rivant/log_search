@@ -2,17 +2,17 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>HL7 Message Search</title>
+  <title>HL7 Message Log Search</title>
   <link rel="stylesheet" href="stylesheets/style.css">
   <script src="javascripts/jquery-3.2.1.min.js"></script>
   <script src="javascripts/autocomplete.js"></script>
-	<script src="javascripts/utils.js"></script>
+  <script src="javascripts/utils.js"></script>
 </head>
 
 <body>
   <h2>CXN Log Search</h2>
   <div style='display: inline-block'>
-  <form method="post" action="/">
+  <form method="post" action="/" onsubmit="return checkAdapterLocation(document.forms['searchForm'])" name="searchForm">
     <select id="server_select" name="serverIP">
       <option value="10.248.202.24">Dev Server</option>
       <option value="10.248.202.25">UAT Server</option>	
@@ -58,8 +58,9 @@
 
     <br/><br/>
 
-    <input type="submit" value="Submit" /></form><br/>
-    <br/>
+    <input type="submit" value="Submit" />
+    <input type="hidden" name="remote" />
+    <br/><br/>
   </form>
   </div>
 
@@ -87,32 +88,31 @@
 	 
   var srcArr = [];
   var dstArr = [];
-	var srcObj = {};
-	var dstObj = {};
-
+  var srcObj = {};
+  var dstObj = {};
   var xhrSrc = new XMLHttpRequest();
   var xhrDst = new XMLHttpRequest();
 
   xhrSrc.onreadystatechange = function(){
     if (xhrSrc.readyState == 4 && xhrSrc.status == 200){
       let lines = xhrSrc.responseText.split('\r\n');
-			lines.forEach((line) => {
-				let item = line.split(' ');
-				srcArr.push(item[0]);
-				srcObj[item[0] +'_'+ item[1]] = item[2];
-			});
+      lines.forEach((line) => {
+	let item = line.split(' ');
+	srcArr.push(item[0]);
+	srcObj[item[0] +'_'+ item[1]] = item[2];
+      });
       autocomplete(document.getElementById('source'), uniqueArray(srcArr));
     }
   };
   xhrDst.onreadystatechange = function(){
     if (xhrDst.readyState == 4 && xhrDst.status == 200){
-			let lines = xhrDst.responseText.split('\r\n');
-			lines.forEach((line) => {
-				let item = line.split(' ');
-				dstArr.push(item[0]);
-				dstObj[item[0] +'_'+ item[1]] = item[2];
-			});
-			autocomplete(document.getElementById('dest'), uniqueArray(dstArr));
+      let lines = xhrDst.responseText.split('\r\n');
+      lines.forEach((line) => {
+	let item = line.split(' ');
+	dstArr.push(item[0]);
+	dstObj[item[0] +'_'+ item[1]] = item[2];
+      });
+      autocomplete(document.getElementById('dest'), uniqueArray(dstArr));
     }
   };
   
