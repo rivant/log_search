@@ -24,13 +24,16 @@
       <option value="10.248.208.20">Stage 6 (EHR)</option>
       <option value="10.248.209.140">Stage 7 (CXNG)</option>
       <option value="10.248.209.142">Stage 8 (CXNH)</option>
+      <option value="10.248.203.16">Prod (BAY)</option>
+			<option value="10.248.204.16">Prod (SACTO)</option>
+      <option value="10.248.209.12">Prod (CXNG)</option>
     </select>
 
     <div id="credentials">
       <span class="cred_label" id="one_off">User ID</span>
-      <input class="cred_input" type="text" name="userID" maxLength="30" value="<%= content.params.userID %>" style="<%= content.borderUserId %>" />
+      <input class="cred_input" type="text" name="userID" maxLength="30" value="<%= content.params.userID %>" style="<%= content.border_userID %>" />
       <span class="cred_label">Password</span>
-      <input class="cred_input" type="password" name="userPass" maxLength="40" value="<%= content.params.userPass %>" style="<%= content.borderPassword %>" />
+      <input class="cred_input" type="password" name="userPass" maxLength="40" value="<%= content.params.userPass %>" style="<%= content.border_userPass %>" />
     </div>
 
     <br/>
@@ -39,12 +42,12 @@
     <span class="labels">Destination Adapter</span>
     <span class="labels">Search For</span><br/>
     <div class="autocomplete">
-      <input id="source" class="search-form" name="source" maxLength="25" autocomplete="off" value="<%= content.params.source %>" style="<%= content.borderSource %>" />
+      <input id="source" class="search-form" name="source" maxLength="25" autocomplete="off" value="<%= content.params.source %>" style="<%= content.border_source %>" />
     </div>
     <div class="autocomplete" autocomplete="off">
       <input id="dest" class="search-form" name="dest" maxLength="20" autocomplete="off" value="<%= content.params.dest %>" />
     </div>
-    <input class="search-form" name="pattern" maxLength="30" value="<%= content.params.pattern %>" style="<%= content.borderPattern %>" />
+    <input class="search-form" name="pattern" maxLength="30" value="<%= content.params.pattern %>" style="<%= content.border_pattern %>" />
 
     <br/>
 
