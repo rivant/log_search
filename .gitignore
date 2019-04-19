@@ -15,3 +15,7 @@
 
 # Ignore debug files
 .jshintrc
+
+# Ignore node_modules
+# Update from package.json, run: npm install 
+/node_modules

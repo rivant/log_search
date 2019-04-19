@@ -7,7 +7,7 @@ const fs = require('fs');
 router.get('/', function(req, res, next) {
   var dstList = '';
 	
-	glob('./store/*.dst.*', (err, files) => {
+	glob('./store/*.dst.+(stage|uat|dev)', (err, files) => {
 		files.forEach((file) => {
 			dstList += fs.readFileSync(file, 'utf8');
 		});

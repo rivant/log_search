@@ -1,19 +1,16 @@
-var express = require('express'),
-    app = express(),
-    path = require('path'),
-    favicon = require('serve-favicon'),
-    logger = require('morgan'),
-    cookieParser = require('cookie-parser'),
-    bodyParser = require('body-parser');
+const express = require('express');
+const app = express();
+const path = require('path');
+const favicon = require('serve-favicon');
+const logger = require('morgan');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
 
-var index = require('./routes/index'),
-    users = require('./routes/users'),
-    util = require('./lib/utils'),
-    content = require('./lib/content'),
-    search = require('./lib/search'),
-    script = require('./lib/scripts'),
-		srcList = require('./routes/srcList'),
-		dstList = require('./routes/dstList');
+let index = require('./routes/index');
+let logSearch = require('./routes/logSearch');
+let	srcList = require('./routes/srcList');
+let dstList = require('./routes/dstList');
+let	adapterConfigData = require('./routes/adapterConfigData');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -32,32 +29,21 @@ app.use(function(req, res, next){
 });
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Templates
-app.locals.script = script;
-app.locals.content = content;
-app.locals.util = util;
-
 // Routes
+app.use('/', index);
 app.use('/srclist', srcList);
 app.use('/dstlist', dstList);
+app.use('/adapterconfigdata', adapterConfigData);
+app.use('/logsearch', logSearch)
 
-// web actions
-app.get('/', function(req, res){
-   res.render('index', content);
-});
-
-/* Removed Download feature
-// /files/* is accessed via req.params[0]
-// but here it is named :file
-app.get('/:file(*)', function(req, res, next){
-  var file = req.params.file,
-  path = __dirname + '/files/' + file;
-  res.download(path);
-}); */
-
-app.post('/', function(req, res){
-   search.form(req, res);
-});
+// Removed Download feature
+	// /files/* is accessed via req.params[0]
+	// but here it is named :file
+	//app.get('/:file(*)', function(req, res, next){
+	//  var file = req.params.file,
+	//      path = __dirname + '/files/' + file;
+	//  res.download(path);
+	//});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -74,20 +60,9 @@ app.use(function(err, req, res, next) {
 
   // render the error
    if (err){
-      loginError(err.message, res);
-   }
-});
-
-function loginError(msg, res){
-   if (msg.includes('EACCES')){
-      content.msgDisplay = 'color:red';
-      content.msg= 'Invalid User ID or Password';
-      res.render('index', content);
-      content.reset();
-   } else {
       res.status(msg.status || 500);
       res.render('error');
    }
-};
+});
 
 module.exports = app;

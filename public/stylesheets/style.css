@@ -37,6 +37,16 @@ b {
 body {
    font-family: Arial, Helvetica, sans-serif;
 }
+#cancel {
+  vertical-align: super;
+  font-size: 10px;
+}
+#counter {
+   width: 250px;
+   color: #3d5c8b;
+   margin-top: 25px;
+   text-align: right;
+}
 #credentials {
    display: inline-block;
    margin-left: -20px;
@@ -68,9 +78,18 @@ body {
 .destMatch {
   color: #770177;
 }
-
+.error-box {
+   border: 2px solid red;
+}
+.error-text {
+   color: red;
+   font-size: 14px;
+}
 h2 {
    color: #0e5b96;
+}
+.hide {
+  visibility: hidden;
 }
 input {
    border-radius: 3px;
@@ -80,14 +99,32 @@ input[value="Submit"] {
    width: 80px;
    margin-top: 7px;
 }
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
 .labels {
    color: #3d5c8b;
-   width: 156px;
+   width: 177px;
    text-align: center;
    display: inline-block;
 }
 li {
 	list-style: none;
+}
+.loader {
+    border: 3px solid #f3f3f3; /* Light grey */
+    border-top: 3px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 17px;
+    height: 17px;
+    animation: spin 2s linear infinite;
+    margin-left: 20px;
+    margin-top: 35px;
+    display: inline-block;
+}
+#msgDisplay {
+  color: darkgreen;
 }
 #reference-block {
 	display: inline-block;
@@ -99,7 +136,7 @@ li {
 .search-form {
    margin-bottom: 7px;
    text-align: center;
-   width: 150px;
+   width: 170px;
    margin-right: 1px;
 }
 #server_select {
@@ -114,11 +151,11 @@ li {
    font-size: medium;
    margin-bottom: 20px;
 }
-.totals {
-   width: 250px;
-   color: #3d5c8b;
-   text-align: right;
-   margin-bottom: -35px;
+#submit {
+   width: 80px;
+   margin-top: 20px;
+   border-radius: 3px;
+   height: 20px;
 }
 .ui-autocomplete-category {
    font-weight: bold;

@@ -20,4 +20,4 @@ fi
 ADAPTER_HOME=`${SECURITY[@]} printenv HOME`
 
 # Get and return adapter names
-${SECURITY[@]} find $ADAPTER_HOME/REGION -type f | grep -e "Adapter.xml$" | xargs ${SECURITY[@]} grep -E "ID=.[A-Z0-9]+_.*${ADAPTER_TYPE}" | cut -d'"' -f2 | xargs -I% echo % $ROLE $IP
+${SECURITY[@]} find $ADAPTER_HOME/REGION -type f | grep -e "Adapter.xml$" | xargs ${SECURITY[@]} grep -E "ID=.[A-Za-z0-9-]+_.*${ADAPTER_TYPE}" | cut -d'"' -f2 | xargs -I% echo % $ROLE $IP

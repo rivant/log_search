@@ -2,66 +2,71 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>HL7 Message Log Search</title>
+  <title>HL7 Message Search</title>
   <link rel="stylesheet" href="stylesheets/style.css">
   <script src="javascripts/jquery-3.2.1.min.js"></script>
   <script src="javascripts/autocomplete.js"></script>
-  <script src="javascripts/utils.js"></script>
+  <script type="text/javascript" src="javascripts/content.js"></script>
+	<script type="text/javascript" src="javascripts/utils.js"></script>
+  <script type="text/javascript" src="javascripts/searchValidation.js"></script>
 </head>
 
 <body>
   <h2>CXN Log Search</h2>
-  <div style='display: inline-block'>
-  <form method="post" action="/" onsubmit="return checkAdapterLocation(document.forms['searchForm'])" name="searchForm">
-    <select id="server_select" name="serverIP">
-      <option value="10.248.202.24">Dev Server</option>
-      <option value="10.248.202.25">UAT Server</option>	
-      <option value="10.248.205.20">Stage 1 (AZNEV)</option>
-      <option value="10.248.204.20">Stage 2 (SACTO)</option>
-      <option value="10.248.203.20">Stage 3 (BAY)</option>
-      <option value="10.248.206.20">Stage 4 (LAWMIX)</option>
-      <option value="10.248.207.20">Stage 5 (SOCAL)</option>
-      <option value="10.248.208.20">Stage 6 (EHR)</option>
+  
+  <div style='display: inline-block' id='searchCriteria'>
+    <select id="server_select" class="search-form" name="serverIP">
+      <option value="10.248.202.25">UAT Server</option>
+      <option value="10.248.202.24">Dev Server</option>      
+      <option value="10.248.205.20">Stage 1 (AZNEV-B)</option>
+      <option value="10.248.204.20">Stage 2 (SACTO-D)</option>
+      <option value="10.248.203.20">Stage 3 (BAY-A)</option>
+      <option value="10.248.206.20">Stage 4 (LAWMIX-C)</option>
+      <option value="10.248.207.20">Stage 5 (SOCAL-E)</option>
+      <option value="10.248.208.20">Stage 6 (EHR-F)</option>
       <option value="10.248.209.140">Stage 7 (CXNG)</option>
       <option value="10.248.209.142">Stage 8 (CXNH)</option>
-      <option value="10.248.203.16">Prod (BAY)</option>
+      <option value="10.248.205.16">Prod (AZNEV)</option>
+      <option value="10.248.203.16">Prod (PBAY)</option>
+      <option value="10.248.206.16">Prod (LAWMIX)</option>
 			<option value="10.248.204.16">Prod (SACTO)</option>
+      <option value="10.248.207.16">Prod (SOCAL)</option>
+      <option value="10.248.208.16">Prod (EHR)</option>
       <option value="10.248.209.12">Prod (CXNG)</option>
+      <option value="10.248.209.78">Prod (CXNH)</option>
     </select>
 
     <div id="credentials">
-      <span class="cred_label" id="one_off">User ID</span>
-      <input class="cred_input" type="text" name="userID" maxLength="30" value="<%= content.params.userID %>" style="<%= content.border_userID %>" />
+      <span class="cred_label">User ID</span>
+      <input class="cred_input search-form" id="userID" type="text" name="userID" maxLength="30" required />
       <span class="cred_label">Password</span>
-      <input class="cred_input" type="password" name="userPass" maxLength="40" value="<%= content.params.userPass %>" style="<%= content.border_userPass %>" />
+      <input class="cred_input search-form" id="userPass" type="password" name="userPass" maxLength="40" required />
     </div>
-
     <br/>
-
+    
     <span class="labels">Source Adapter</span>
     <span class="labels">Destination Adapter</span>
-    <span class="labels">Search For</span><br/>
-    <div class="autocomplete">
-      <input id="source" class="search-form" name="source" maxLength="25" autocomplete="off" value="<%= content.params.source %>" style="<%= content.border_source %>" />
-    </div>
-    <div class="autocomplete" autocomplete="off">
-      <input id="dest" class="search-form" name="dest" maxLength="20" autocomplete="off" value="<%= content.params.dest %>" />
-    </div>
-    <input class="search-form" name="pattern" maxLength="30" value="<%= content.params.pattern %>" style="<%= content.border_pattern %>" />
-
+    <span class="labels">Search For</span>
     <br/>
-
+    
+    <div class="autocomplete">
+      <input id="source" class="search-form" name="source" maxLength="25" autocomplete="off" required />
+    </div>
+    <div class="autocomplete">
+      <input id="dest" class="search-form" name="dest" maxLength="20" autocomplete="off" />
+    </div>
+    <input id="pattern" class="search-form" name="pattern" maxLength="30" required />    
+    <br/>
+    
     <span class="dateLabel">Start Date</span>
-    <input class="dates search" type="date" id="startDate" name="start" value="<%= content.params.start || util.today() %>" />
+    <input class="dates search-form" type="date" id="startDate" name="start" />
     <span class="dateLabel">End Date</span>
-    <input class="dates search" type="date" id="endDate" name="end" value="<%= content.params.end || util.today() %>" />
-
-    <br/><br/>
-
-    <input type="submit" value="Submit" />
-    <input type="hidden" name="remote" />
-    <br/><br/>
-  </form>
+    <input class="dates search-form" type="date" id="endDate" name="end" />
+    <input name="destAdapterLocation" type="hidden" id="destAdapterLocation" />
+    <span id='compError' class='hide error-text'>Start Date cannot be greater than End Date</span>      
+    <br/>
+    
+    <button id="submit">Search</button>
   </div>
 
   <div id='reference-block'>
@@ -72,47 +77,54 @@
     <label>Example: Initiate + Sacramento + ADT and Scheduling = INI30MIX</label>
   </div>
 
-  <div class="totals" style=<%= content.totalDisplay %>>
-    <span>Total Source Matches: </span><span id="srcCount"><%= content.srcTotal %></span><br/>
-    <span>Total Destination Correlations: </span><span id="dstCount"><%= content.dstTotal %></span>
+  <div id='loader' style='visibility:hidden'>
+    <button id="cancel">Cancel</button> 
+    <div class='loader'></div>
   </div>
   
-  <pre style="<%= content.msgDisplay %>" id="msg-window"><%= content.msg %>
-
+  <div id="counter" style='visibility:hidden'>
+    <span>Total Source Matches: </span><span id="srcCount" class="totals"></span><br/>
+    <span>Total Destination Correlations: </span><span id="dstCount" class="totals"></span>
+  </div>
+  
+  <pre id="msgDisplay"></pre>
 </body>
 <script>
-  $('#server_select').val('<%= content.params.serverIP %>');
+  $('#startDate').val(today());
+  $('#endDate').val(today());  
+    
   $('#server_select').on('change', function(){    
     $("input[name='userID']").focus();
   });
 	 
-  var srcArr = [];
-  var dstArr = [];
-  var srcObj = {};
-  var dstObj = {};
-  var xhrSrc = new XMLHttpRequest();
-  var xhrDst = new XMLHttpRequest();
+  let srcArr = [];
+  let dstArr = [];
+	let srcObj = {};
+	let dstObj = {};
+
+  let xhrSrc = new XMLHttpRequest();
+  let xhrDst = new XMLHttpRequest();
 
   xhrSrc.onreadystatechange = function(){
     if (xhrSrc.readyState == 4 && xhrSrc.status == 200){
       let lines = xhrSrc.responseText.split('\r\n');
-      lines.forEach((line) => {
-	let item = line.split(' ');
-	srcArr.push(item[0]);
-	srcObj[item[0] +'_'+ item[1]] = item[2];
-      });
+			lines.forEach((line) => {
+				let item = line.split(' ');
+				srcArr.push(item[0]);
+				srcObj[item[0] +'_'+ item[1]] = item[2];
+			});
       autocomplete(document.getElementById('source'), uniqueArray(srcArr));
     }
   };
   xhrDst.onreadystatechange = function(){
     if (xhrDst.readyState == 4 && xhrDst.status == 200){
-      let lines = xhrDst.responseText.split('\r\n');
-      lines.forEach((line) => {
-	let item = line.split(' ');
-	dstArr.push(item[0]);
-	dstObj[item[0] +'_'+ item[1]] = item[2];
-      });
-      autocomplete(document.getElementById('dest'), uniqueArray(dstArr));
+			let lines = xhrDst.responseText.split('\r\n');
+			lines.forEach((line) => {
+				let item = line.split(' ');
+				dstArr.push(item[0]);
+				dstObj[item[0] +'_'+ item[1]] = item[2];
+			});
+			autocomplete(document.getElementById('dest'), uniqueArray(dstArr));
     }
   };
   
@@ -121,5 +133,20 @@
   
   xhrDst.open("GET", "/dstlist");
   xhrDst.send();
+  
+  let server = <%- JSON.stringify(comm) %>
+  validateSearch(server.address, server.port)
+  
+  function adapterLocationsLookup(){
+    let ipAddress = document.getElementById('server_select').value;
+    let sourceAdapter = document.getElementById('source').value;
+    let destAdapter = document.getElementById('dest').value;
+    let role = serverRole[ipAddress];
+    
+    if (srcObj[sourceAdapter + '_SOURCE_' + role] !== dstObj[destAdapter + '_DEST_' + role] && destAdapter !== ''){
+      document.getElementById('destAdapterLocation').value = dstObj[destAdapter + '_DEST_' + role];
+    }
+    return document.getElementById('destAdapterLocation').value;
+  }
 </script>
 </html>

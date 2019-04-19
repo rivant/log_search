@@ -1,14 +1,9 @@
-var express = require('express'),
-    router = express.Router(),
-    params = {
-       title: 'Server'
-    };
+const express = require('express');
+const router = express.Router();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-   res.render('index', params);
-});
+  res.render('index', {comm: res.connection.address()})
+})
 
 module.exports = router;
-
-
