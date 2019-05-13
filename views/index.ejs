@@ -62,7 +62,7 @@
     <input class="dates search-form" type="date" id="startDate" name="start" />
     <span class="dateLabel">End Date</span>
     <input class="dates search-form" type="date" id="endDate" name="end" />
-    <input name="destAdapterLocation" type="hidden" id="destAdapterLocation" />
+    <input name="destAdapterLocation" type="hidden" id="destAdapterLocation" class="search-form" />
     <span id='compError' class='hide error-text'>Start Date cannot be greater than End Date</span>      
     <br/>
     
@@ -136,17 +136,6 @@
   
   let server = <%- JSON.stringify(comm) %>
   validateSearch(server.address, server.port)
-  
-  function adapterLocationsLookup(){
-    let ipAddress = document.getElementById('server_select').value;
-    let sourceAdapter = document.getElementById('source').value;
-    let destAdapter = document.getElementById('dest').value;
-    let role = serverRole[ipAddress];
-    
-    if (srcObj[sourceAdapter + '_SOURCE_' + role] !== dstObj[destAdapter + '_DEST_' + role] && destAdapter !== ''){
-      document.getElementById('destAdapterLocation').value = dstObj[destAdapter + '_DEST_' + role];
-    }
-    return document.getElementById('destAdapterLocation').value;
-  }
+
 </script>
 </html>

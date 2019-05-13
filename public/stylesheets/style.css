@@ -137,12 +137,12 @@ li {
    margin-bottom: 7px;
    text-align: center;
    width: 170px;
-   margin-right: 1px;
+   margin-right: 5px;
 }
 #server_select {
    border-radius: 3px;
    display: inline-block;
-   margin-right: 17px;
+   margin-right: 15px;
    overflow: hidden;
    text-overflow: ellipsis;
    text-align: center;

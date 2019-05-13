@@ -39,3 +39,7 @@ serverRole = {
 	'10.248.209.12': 'prod',
 	'10.248.209.78': 'prod'
 }
+
+function randomPortNumber() {
+  return Math.floor(Math.random() * (65000 - 60000 + 1)) + 60000;
+}

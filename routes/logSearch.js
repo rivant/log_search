@@ -9,7 +9,9 @@ function logSearch(ws, searchParams) {
   script.searchLogs(searchParams, (rawResultsStream) => {
     if (rawResultsStream) {
       parse.message(rawResultsStream, (segment) => {
+        if (ws) {
           ws.send(segment)
+        }
       })
       
       rawResultsStream.stdout.on('error', (raw) => {

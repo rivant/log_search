@@ -43,7 +43,7 @@ content = {
     let msgArr = msgStack.split('DEST.log');
     let msg = /(MSH[\s\S]*)(\u001c\r|\u0003)/m;
     let timeStamp = /(MESSAGE PROCESSING[\w\s:-]*),/;
-    let ack = /MSA\|[\s\S]* - (.*ACK A.*)/;
+    let ack = /INFO[\s\S]*(POSITIVE.*|NACK.*)/;
     let fileNameDst = [];
 
     if (fileArr){
@@ -51,8 +51,13 @@ content = {
         html += '<ul class="destMatch"><li style="color:blue">'+ fileArr[idx] +'</li>';
 
         if (msgArr[idx + 1].includes('dummy') === false && msg.test(msgArr[idx + 1])){
-          html += '<li style="color:blue">'+ timeStamp.exec(msgArr[idx + 1])[1] +'</li><ul>';			
-          html += '<li>'+ msg.exec(msgArr[idx + 1])[1] +'</li></ul></ul>';         
+          if (timeStamp.test(msgArr[idx + 1])) {
+            html += '<li style="color:blue">'+ timeStamp.exec(msgArr[idx + 1])[1] +'</li><ul>';
+          }          
+          html += '<li>'+ msg.exec(msgArr[idx + 1])[1] +'</li></ul>';
+          if (ack.test(msgArr[idx + 1])) {
+            html += '<li style="color:blue">'+ ack.exec(msgArr[idx + 1])[1] +'</li></ul><br>';
+          }
         } else if (/dummy.*/.test(msgArr[idx + 1])) {
             html += '<ul><li>'+ /dummy.*/.exec(msgArr[idx + 1])[0] +'</li></ul></ul>';
         } else { html += '</ul></ul>'; }

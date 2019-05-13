@@ -8,14 +8,15 @@ END_TIME=$3
 START_TIME=$4
 KEY=$5
 DEST=$6
-EPASS=$7
+REMOTE=$7
+EPASS=$8
 
 # check if sudo needed
 SECURITY=("")
 CLEANUP=("")
 if [[ `uname -n` != phxc* ]]; then
   sudo_setup(){
-    SECURITY=(sudo -Au \#800)
+    SECURITY=(sudo -Au\#800)
     DPASS=`echo "$EPASS" | openssl enc -aes-128-cbc -a -d -pass pass:"$KEY"`
     echo "#!/bin/sh\necho $DPASS" > ~/.sudopass
     chmod 700 ~/.sudopass
@@ -37,6 +38,33 @@ SRC_REGION_NUM=`echo $SOURCE | sed $REGION_PATTERN`
 SRC_REGION_NAME=`echo "$REGION_NAMES" | grep -E "[A-Z]$SRC_REGION_NUM$"`
 SRC_PATH="${ADAPTER_HOME}/REGION/$SRC_REGION_NAME/LOG"
 
+# Search point for remote destination
+#if [[ $DEST_LOCATION != 'empty' ]]; then
+#  #Setup Tunnel
+#  USER_ID=`echo $REMOTE | cut -d_ -f1`
+#  TUNNEL_IP=`echo $REMOTE | cut -d_ -f2`
+#  TUNNEL_PORT=`echo $REMOTE | cut -d_ -f3`
+  #expect -c "spawn -noecho ssh -fNqo StrictHostKeyChecking=no -L $TUNNEL_PORT:localhost:22 $USER_ID@$TUNNEL_IP; log_user 0; expect \"eDir Password:\"; send \"$DPASS\r\"; set timeout 1; expect eof" & 
+  
+  #Remote Environment Setup
+#  ACCESS=(ssh -o StrictHostKeyChecking=no localhost -p$TUNNEL_PORT)
+
+#USER_DIR=$(
+#/usr/bin/expect << EOD
+#spawn -noecho ksh93 -c "ssh -qo StrictHostKeyChecking=no localhost -p$TUNNEL_PORT 'echo \"#!/bin/sh\necho $DPASS\" > ~/.sudopass; chmod 700 ~/.sudopass; export SUDO_ASKPASS=~/.sudopass; ${SECURITY[@]} printenv HOME'"
+#log_user 0
+#expect "eDir Password:"
+#send "$DPASS\r"
+#log_user 1
+#expect eof
+#EOD
+#)
+
+  #Tunnel Cleanup
+  #TCPCB=`netstat -Ana | grep $TUNNEL_PORT | tr '\n' ' ' | cut -d' ' -f1`
+  #rmsock $TCPCB tcpcb | cut -d' ' -f9 | xargs -I% kill %
+#fi
+
 # Search point for destinations
 if [[ $DEST != 'empty' ]]; then
    DEST_REGION_NUM=`echo $DEST | sed $REGION_PATTERN`
@@ -46,7 +74,7 @@ if [[ $DEST != 'empty' ]]; then
 else
 	DOWNSTREAM=`${SECURITY[@]} cat ${ADAPTER_HOME}/REGION/$SRC_REGION_NAME/CONFIG/${SRC_REGION_NAME}Adapter.xml | sed "/${SOURCE}_SOURCE/,/<\/destinations>/!d" | grep '<destID>' | sed 's/.*>\([A-Z0-9-]*\)<.*/\1/'`	
 	if [[ -z $DOWNSTREAM ]]; then
-		echo UnAble to find entry for ${SOURCE}_SOURCE in ${SRC_REGION_NAME}Adapter.xml to determine destinations.  Try specifying a destination.
+		echo Unable to find entry for ${SOURCE}_SOURCE in ${SRC_REGION_NAME}Adapter.xml to determine destinations.  Try specifying a destination.
 		exit 1
 	fi
 	NUM_CHECK=''
@@ -76,14 +104,14 @@ DEST_DATE_MATCHES=`${SECURITY[@]} find $DEST_PATH -type f -mtime +$END_TIME ! -m
 # Find $SOURCE files in date range.  Return file name and line number of $SEARCH
 # Filter out Ack Messages, and any search criteria outside of an hl7 message
 if [ `${SECURITY[@]} ls $SRC_PATH 2>/dev/null | wc -l` != 0 ]; then		
-  SRC_MATCHES=`${SECURITY[@]} find $SRC_PATH -type f -mtime +$END_TIME ! -mtime +$START_TIME | grep "${SOURCE}_SOURCE.log" | sort -r | xargs ${SECURITY[@]} zgrep -n $SEARCH /dev/null | grep -v "MSA|" | grep "MSH|" | cut -f1-2 -d:`
+  SRC_MATCHES=`${SECURITY[@]} find $SRC_PATH -type f -mtime +$END_TIME ! -mtime +$START_TIME | grep "${SOURCE}_SOURCE.log" | sort -r | xargs ${SECURITY[@]} zgrep -n "$SEARCH" /dev/null | grep -v "MSA|" | grep "MSH|" | cut -f1-2 -d:`
 	
   if [[ -z $SRC_MATCHES ]]; then
-    printf "UnAble to find $SEARCH in $SOURCE Source Log Messages."
+    printf "Unable to find $SEARCH in $SOURCE Source Log Messages."
     exit 1
   fi
 else
-  printf "UnAble to find $SRC_PATH\n" 1>&2
+  printf "Unable to find $SRC_PATH\n" 1>&2
   exit 1
 fi
 
@@ -95,7 +123,8 @@ do
 	SRC_NAME_ONLY=`echo $SRC_FILE_NAME | rev | cut -d/ -f1 | rev | sed 's/.gz/.log/g'`
        
   # Get Message + metadata
-	SRC_MSG=`${SECURITY[@]} zgrep "[[:alnum:]]*" $SRC_FILE_NAME | sed "${SRC_LINE_NUM},/COREL ID/!d"`		
+	#SRC_MSG=`${SECURITY[@]} zgrep "[[:alnum:]]*" $SRC_FILE_NAME | sed "${SRC_LINE_NUM},/RESPONSE/!d"`
+  SRC_MSG=`${SECURITY[@]} zgrep "[[:alnum:]]*" $SRC_FILE_NAME | sed "${SRC_LINE_NUM},/COREL ID/!d"`
   CORREL_ID=`echo $SRC_MSG | sed 's/.* COREL ID = \([A-Z0-9]*\) .*/\1/'`
 
   for DEST_NAME in $DEST_DATE_MATCHES
@@ -112,11 +141,12 @@ do
     do
       LINE_NUMBER=`expr ${ID_DEST_MATCHES_ARR[$ARR_COUNTER]} + 2`
       LINE_GRAB=`${SECURITY[@]} zgrep -e "[:alnum::blank:]*" $DEST_NAME | sed -n "${LINE_NUMBER}p"`
-      #LINE_GRAB=`${SECURITY[@]} zgrep -e "[:alnum::blank:]*" $DEST_NAME | sed "${LINE_NUMBER},/ACK A/!d"`      
 
       if [[ -n $ID_DEST_MATCHES_ARR ]]; then
         if [[ -z `echo $LINE_GRAB | grep dummy` ]]; then
-           DEST_MSG_MATCH=`${SECURITY[@]} zgrep -e "[:alnum::blank:]*" $DEST_NAME | sed "$LINE_NUMBER,/MSH/!d"`
+           #DEST_MSG_MATCH=`${SECURITY[@]} sed "$LINE_NUMBER,/.ACK A./!d" $DEST_NAME`
+           DEST_MSG_MATCH=`${SECURITY[@]} zgrep -e "[:alnum::blank:]*" $DEST_NAME | sed "$LINE_NUMBER,/.ACK A./!d"`
+           #DEST_MSG_MATCH=`${SECURITY[@]} zgrep -e "[:alnum::blank:]*" $DEST_NAME | sed "$LINE_NUMBER,/MSH/!d"`
            TOTAL=$TOTAL"$DEST_NAME \n $DEST_MSG_MATCH \n"
         else
            TOTAL=$TOTAL"\n$DEST_NAME \n $LINE_GRAB\r\n"
@@ -128,4 +158,4 @@ do
   echo "$CORREL_ID\n${SRC_PATH}/${SRC_NAME_ONLY}\n$SRC_MSG\n$TOTAL\nDELIMITER"  
   TOTAL=''
 done
-${CLEANUP[@]}
+`${CLEANUP[@]}`
