@@ -59,12 +59,23 @@ function validateSearch(address, port) {
         ws.send(JSON.stringify(searchFor));
       }
 
-      ws.onmessage = (msg) => {
-        if (msg.data.includes('MSH|')){
-          $(content.toHtml(msg.data, searchFor.pattern.replace(/'/g, ''))).appendTo('#msgDisplay');
+      let partialMsg = '';
+      let fullMsg = '';
+      let msgDelimiterIdx = 0;
+      ws.onmessage = (chunk) => {
+        partialMsg += chunk.data;
+        
+        if (partialMsg.includes('DELIMITER')) {
+          msgDelimiterIdx = partialMsg.lastIndexOf('DELIMITER') + 9;
+          fullMsg = partialMsg.substring(0, msgDelimiterIdx);
+          partialMsg = partialMsg.substring(msgDelimiterIdx, partialMsg.length);
+
+          $(content.toHtml(fullMsg, searchFor.pattern.replace(/'/g, ''))).appendTo('#msgDisplay');
           document.getElementById('srcCount').innerHTML = content.srcMsgCount;
-          document.getElementById('dstCount').innerHTML = content.dstMsgCount;}
-        else {$('<span style="color:red">'+ msg.data +'</span>').appendTo('#msgDisplay');}
+          document.getElementById('dstCount').innerHTML = content.dstMsgCount;
+        } else if (!partialMsg.includes('MSH|')) {
+            $('<span style="color:red">'+ partialMsg +'</span>').appendTo('#msgDisplay');
+        }
       }
 
       ws.onclose = (closeEvent) => {

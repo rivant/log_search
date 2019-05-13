@@ -1,5 +1,4 @@
 const script = require('../lib/scripts')
-const parse = require('../lib/parsers')
 
 function logSearch(ws, searchParams) {
   let destination = searchParams.dest.split('_')
@@ -8,14 +7,14 @@ function logSearch(ws, searchParams) {
 
   script.searchLogs(searchParams, (rawResultsStream) => {
     if (rawResultsStream) {
-      parse.message(rawResultsStream, (segment) => {
+      rawResultsStream.stdout.on('data', (msg) => {   
         if (ws) {
-          ws.send(segment)
-        }
+          ws.send(msg.toString())
+        }       
       })
       
-      rawResultsStream.stdout.on('error', (raw) => {
-        ws.send(raw)
+      rawResultsStream.stdout.on('error', (err) => {
+        ws.send(err)
       })
 
       rawResultsStream.on('close', () => {
