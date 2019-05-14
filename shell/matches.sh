@@ -39,31 +39,53 @@ SRC_REGION_NAME=`echo "$REGION_NAMES" | grep -E "[A-Z]$SRC_REGION_NUM$"`
 SRC_PATH="${ADAPTER_HOME}/REGION/$SRC_REGION_NAME/LOG"
 
 # Search point for remote destination
-#if [[ $DEST_LOCATION != 'empty' ]]; then
-#  #Setup Tunnel
-#  USER_ID=`echo $REMOTE | cut -d_ -f1`
-#  TUNNEL_IP=`echo $REMOTE | cut -d_ -f2`
-#  TUNNEL_PORT=`echo $REMOTE | cut -d_ -f3`
-  #expect -c "spawn -noecho ssh -fNqo StrictHostKeyChecking=no -L $TUNNEL_PORT:localhost:22 $USER_ID@$TUNNEL_IP; log_user 0; expect \"eDir Password:\"; send \"$DPASS\r\"; set timeout 1; expect eof" & 
+if [ $DEST_LOCATION != 'empty' -a $DEST != 'empty' ]; then
+  #Setup Tunnel
+  USER_ID=`echo $REMOTE | cut -d_ -f1`
+  TUNNEL_IP=`echo $REMOTE | cut -d_ -f2`
+  TUNNEL_PORT=`echo $REMOTE | cut -d_ -f3`
+  ACCESS=(ssh -qoStrictHostKeyChecking=no localhost -p$TUNNEL_PORT)
+  expect -c "spawn -noecho ssh -fNqo StrictHostKeyChecking=no -L $TUNNEL_PORT:localhost:22 $USER_ID@$TUNNEL_IP; log_user 0; expect \"eDir Password:\"; send \"$DPASS\r\"; set timeout 1; expect eof" & 
   
+  #Callback for Tunnel connection with 10 second timeout.
+  TIMER=0
+  until [ $TIMER -gt 40 ]
+  do
+    PORT_CHECK=`netstat -an | grep $TUNNEL_PORT`
+    if [[ -n $PORT_CHECK ]]; then
+      #echo Established in `echo $TIMER \* 0.25|bc` seconds
+      break
+    fi
+    sleep 0.25
+    TIMER=`expr $TIMER + 1`
+  done
+    
   #Remote Environment Setup
-#  ACCESS=(ssh -o StrictHostKeyChecking=no localhost -p$TUNNEL_PORT)
+  if [[ -n $PORT_CHECK ]]; then    
+    USER_DIR=$(
+      /usr/bin/expect <<-EOD
+      spawn -noecho ksh93 -c "${ACCESS[@]} 'echo \"#!/bin/sh\necho $DPASS\" > ~/.sudopass; chmod 700 ~/.sudopass; export SUDO_ASKPASS=~/.sudopass; ${SECURITY[@]} printenv HOME'"
+      log_user 0
+      expect "eDir Password:"
+      send "$DPASS\r"
+      log_user 1
+      expect eof
+EOD)
 
-#USER_DIR=$(
-#/usr/bin/expect << EOD
-#spawn -noecho ksh93 -c "ssh -qo StrictHostKeyChecking=no localhost -p$TUNNEL_PORT 'echo \"#!/bin/sh\necho $DPASS\" > ~/.sudopass; chmod 700 ~/.sudopass; export SUDO_ASKPASS=~/.sudopass; ${SECURITY[@]} printenv HOME'"
-#log_user 0
-#expect "eDir Password:"
-#send "$DPASS\r"
-#log_user 1
-#expect eof
-#EOD
-#)
-
-  #Tunnel Cleanup
-  #TCPCB=`netstat -Ana | grep $TUNNEL_PORT | tr '\n' ' ' | cut -d' ' -f1`
-  #rmsock $TCPCB tcpcb | cut -d' ' -f9 | xargs -I% kill %
-#fi
+    #Environment and Tunnel Cleanup
+    /usr/bin/expect <<-EOD
+      spawn -noecho ksh93 -c "${ACCESS[@]} '${CLEANUP[@]}'"
+      log_user 0
+      expect "eDir Password:"
+      send "$DPASS\r"
+      log_user 1
+      expect eof
+EOD
+    ps -u $USER_ID | grep -v sshd | grep ssh | cut -d' ' -f3 | xargs -I% kill %
+  else
+    echo "Unable to connect to remote destination server"
+  fi
+fi
 
 # Search point for destinations
 if [[ $DEST != 'empty' ]]; then
