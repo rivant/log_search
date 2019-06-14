@@ -1,0 +1,1 @@
+Store only the "store" directory in the repo, not the storage files.
