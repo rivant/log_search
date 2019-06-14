@@ -39,21 +39,28 @@ function validateSearch(address, port) {
     }    
   }
 
-  $('#submit').on('click', function(){ 
+  $('#submit').on('click', function(){
     if (validate.all()){
       let searchFor = {}      
       let ipAddress = document.getElementById('server_select').value;
       let sourceAdapter = document.getElementById('source').value;
       let destAdapter = document.getElementById('dest').value;
       let role = serverRole[ipAddress];
-      let ws = new WebSocket('wss://' + address + ':' + port)
+      let ws = new WebSocket('wss://' + address + ':' + port);
+      let indicator = document.getElementById('loader');
 
-      document.getElementById('destAdapterLocation').value = (srcObj[sourceAdapter +'_'+ role] === dstObj[destAdapter +'_'+ role] && destAdapter !== '') ? 
+      if (destAdapter === ''){
+        document.getElementById('destAdapterLocation').value = 'empty';
+      } else {
+        document.getElementById('destAdapterLocation').value = (srcObj[sourceAdapter +'_'+ role] === dstObj[destAdapter +'_'+ role]) ? 
         'empty' : document.getElementById('userID').value +'_'+ dstObj[destAdapter +'_'+ role] +'_'+ randomPortNumber();
-  
-      $('.search-form').map(function(){ searchFor[this.name] = this.value })
-      $('.totals').text('')
-      $('#msgDisplay').text('')          
+      }
+
+      let searchForm = document.getElementsByClassName('search-form');
+      for (let i = 0; i < searchForm.length; i++){ searchFor[searchForm.item(i).name] = searchForm.item(i).value; }
+      let msgTotals = document.getElementsByClassName('totals');
+      for (let i = 0; i < msgTotals.length; i++) { msgTotals.item(i).innerHTML = ''; }
+      document.getElementById('msgDisplay').innerHTML = '';
 
       ws.onopen = (event) => {
         ws.send(JSON.stringify(searchFor));
@@ -79,15 +86,14 @@ function validateSearch(address, port) {
       }
 
       ws.onclose = (closeEvent) => {
-        $('#loader').css({'visibility': 'hidden'})
-        content.srcMsgCount = 0
-        content.dstMsgCount = 0
+        indicator.setAttribute('style', 'visibility:hidden');
+        content.srcMsgCount = 0;
+        content.dstMsgCount = 0;
       }
 
-      $('#counter').css({'visibility': 'visible'})
-      $('#loader').css({'visibility': 'visible'}).on('click', function(){
-        ws.close()
-      })
+      document.getElementById('counter').setAttribute('style', 'visibility:visible');
+      indicator.setAttribute('style', 'visibility:visible');
+      indicator.addEventListener('click', () => { ws.close(); })
     }
   })
 }

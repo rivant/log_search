@@ -59,7 +59,7 @@ content = {
             html += '<li style="color:blue">'+ ack.exec(msgArr[idx + 1])[1] +'</li></ul><br>';
           }
         } else if (/dummy.*/.test(msgArr[idx + 1])) {
-            html += '<ul><li>'+ /dummy.*/.exec(msgArr[idx + 1])[0] +'</li></ul></ul>';
+            html += '<ul><li>'+ /dummy.*/.exec(msgArr[idx + 1])[0] +'</li><br></ul></ul>';
         } else { html += '</ul></ul>'; }
             this.dstMsgCount++;;
       }
