@@ -129,6 +129,7 @@ li {
 #reference-block {
 	display: inline-block;
 	position: absolute;
+  margin-left: 10px;
 }
 #reference-title {
 	color: #6683af;
