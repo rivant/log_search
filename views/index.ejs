@@ -55,13 +55,13 @@
     <div class="autocomplete">
       <input id="dest" class="search-form" name="dest" maxLength="20" autocomplete="off" />
     </div>
-    <input id="pattern" class="search-form" name="pattern" maxLength="30" required />    
+    <input id="pattern" class="search-form catch-enter" name="pattern" maxLength="30" required />    
     <br/>
     
     <span class="dateLabel">Start Date</span>
-    <input class="dates search-form" type="date" id="startDate" name="start" />
+    <input class="dates search-form catch-enter" type="date" id="startDate" name="start" />
     <span class="dateLabel">End Date</span>
-    <input class="dates search-form" type="date" id="endDate" name="end" />
+    <input class="dates search-form catch-enter" type="date" id="endDate" name="end" />
     <input name="destAdapterLocation" type="hidden" id="destAdapterLocation" class="search-form" />
     <span id='compError' class='hide error-text'>Start Date cannot be greater than End Date</span>      
     <br/>
@@ -89,6 +89,7 @@
   
   <pre id="msgDisplay"></pre>
 </body>
+
 <script>
   $('#startDate').val(today());
   $('#endDate').val(today());  
@@ -136,6 +137,15 @@
   
   let server = <%- JSON.stringify(comm) %>
   validateSearch(server.address, server.port)
-
+  
+  let catchEnterList = document.getElementsByClassName('catch-enter');
+  let submitButton = document.getElementById('submit');
+  for (let i = 0; i < catchEnterList.length; i++) {
+    catchEnterList.item(i).addEventListener('keyup', function(event){
+      if (event.key === 'Enter') {
+        submitButton.click();
+      }
+    });
+  }
 </script>
 </html>
