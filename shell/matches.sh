@@ -164,10 +164,9 @@ fi
 # Match sources to dests
 for SRC_ENTRY in $SRC_MATCHES
 do
-  SRC_LINE_NUM=`echo $SRC_ENTRY | cut -f2 -d:`
-  SRC_FILE_NAME=`echo $SRC_ENTRY | cut -f1 -d:`
-	SRC_NAME_ONLY=`echo $SRC_FILE_NAME | rev | cut -d/ -f1 | rev | sed 's/.gz/.log/g'`
-       
+  SRC_LINE_NUM=`echo $SRC_ENTRY | cut -d: -f2`
+  SRC_FILE_NAME=`echo $SRC_ENTRY | cut -d: -f1`
+
   # Get Message + metadata
 	#SRC_MSG=`${SECURITY[@]} zgrep "[[:alnum:]]*" $SRC_FILE_NAME | sed "${SRC_LINE_NUM},/RESPONSE/!d"`
   SRC_MSG=`${SECURITY[@]} zgrep "[[:alnum:]]*" $SRC_FILE_NAME | sed "${SRC_LINE_NUM},/COREL ID/!d"`
@@ -201,7 +200,7 @@ do
       ARR_COUNTER=`expr $ARR_COUNTER + 1`
     done
   done
-  echo "$CORREL_ID\n${SRC_PATH}/${SRC_NAME_ONLY}\n$SRC_MSG\n$TOTAL\nDELIMITER"  
+  echo "$CORREL_ID\n${SRC_FILE_NAME}\n$SRC_MSG\n$TOTAL\nDELIMITER"  
   TOTAL=''
 done
 `${CLEANUP[@]}`
