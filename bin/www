@@ -13,7 +13,7 @@ const logSearch = require('../routes/logSearch')
 /**
  * Set options
  */
-const port = normalizePort(process.env.PORT || '17702')
+const port = normalizePort(process.env.PORT || '17701')
 app.set('port', port)
 const credentials = {
   key: fs.readFileSync('./.cert/private.key'),
