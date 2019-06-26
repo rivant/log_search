@@ -63,7 +63,13 @@ if [[ $REMOTE != 'empty' ]]; then
   done
       
   if [[ -z $PORT_CHECK ]]; then
-    echo "Unable to connect to remote destination server"
+    echo "The connection to the remote server did not complete.
+          Sometimes this happens in the world of server connections.
+          Please try the search again.  If the problem persists, double
+          check that you can log into the remote server manually."
+    #Clean up any un-resolved connection remnants    
+    ps -u $USER_ID | grep -v sshd | grep ssh | awk '{print $2}' | xargs -I% kill %
+    rm ~/${USER_ID}-ctrl-socket
     exit
   fi
 
