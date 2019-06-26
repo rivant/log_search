@@ -33,83 +33,10 @@ ADAPTER_HOME=`${SECURITY[@]} printenv HOME`
 REGION_PATTERN='s/[[:alpha:]-]*\([0-9]*\)[[:alnum:]]*/\1/'
 REGION_NAMES=`${SECURITY[@]} ls $ADAPTER_HOME/REGION`
 
-# Remote Variables and Functions
-TUNNEL_PORT=`echo $REMOTE | cut -d_ -f3`
-ACCESS=(ssh -qoStrictHostKeyChecking=no localhost -p$TUNNEL_PORT)
-
-remote_environment_setup(){
-/usr/bin/expect <<-EOD
-  spawn -noecho ksh93 -c "${ACCESS[@]} 'echo \"#!/bin/sh\necho $DPASS\" > ~/.sudopass; chmod 700 ~/.sudopass; export SUDO_ASKPASS=~/.sudopass; ${SECURITY[@]} printenv HOME | xargs -I% ${SECURITY[@]} ls %/REGION/ -d 2>/dev/null'"
-  log_user 0
-  expect "eDir Password:"
-  send "$DPASS\r"
-  log_user 1
-  expect eof
-EOD
-}
-remote_environment_cleanup(){
-/usr/bin/expect <<-EOD
-  spawn -noecho ksh93 -c "${ACCESS[@]} '${CLEANUP[@]}'"
-  log_user 0
-  expect "eDir Password:"
-  send "$DPASS\r"
-  log_user 1
-  expect eof
-EOD
-}
-
 # Search point for sources
 SRC_REGION_NUM=`echo $SOURCE | sed $REGION_PATTERN`
 SRC_REGION_NAME=`echo "$REGION_NAMES" | grep -E "[A-Z]$SRC_REGION_NUM$"`
 SRC_PATH="${ADAPTER_HOME}/REGION/$SRC_REGION_NAME/LOG"
-
-# Search point for remote destination
-#if [[ $REMOTE != 'empty' ]]; then
-  #Setup Tunnel
-#  USER_ID=`echo $REMOTE | cut -d_ -f1`
-#  TUNNEL_IP=`echo $REMOTE | cut -d_ -f2`
-#  expect -c "spawn -noecho ssh -fNqo StrictHostKeyChecking=no -L $TUNNEL_PORT:localhost:22 $USER_ID@$TUNNEL_IP; log_user 0; expect \"eDir Password:\"; send \"$DPASS\r\"; set timeout 1; expect eof" & 
-  
-  #Callback for Tunnel connection with 10 second timeout.
-#  TIMER=0
-#  while [ $TIMER -lt 40 ]
-#  do
-#    PORT_CHECK=`netstat -an | grep $TUNNEL_PORT`
-#    if [[ -n $PORT_CHECK ]]; then
-#      REMOTE_REGIONS=$(remote_environment_setup)
-#      break
-#    fi
-#    sleep 0.25
-#    TIMER=`expr $TIMER + 1`
-#  done
-      
-#  if [[ -z $PORT_CHECK ]]; then
-#    echo "Unable to connect to remote destination server"
-#    exit
-#  fi
-  
-#  DEST_REGION_NUM=`echo $DEST | sed $REGION_PATTERN`
-#  DEST_REGION_NAME=`echo "$REMOTE_REGIONS" | grep -E "([A-Z]${DEST_REGION_NUM})" | tr -d '\r\n'`
-#  REMOTE_ADAPTER_HOME=`echo "$REMOTE_REGIONS" | grep "MQHA" | cut -d'/' -f1-3`
-#  DEST_PATH="${REMOTE_ADAPTER_HOME}/REGION/${DEST_REGION_NAME}/LOG"
-  
-#DEST_DATE_MATCHES=$(
-#/usr/bin/expect <<-EOD
-#  spawn -noecho ksh93 -c "${ACCESS[@]} '${SECURITY[@]} find $DEST_PATH -type f -mtime +$END_TIME ! -mtime +$START_TIME | grep \"${DEST}_DEST.log\" | sort -r'"
-#  log_user 0
-#  expect "eDir Password:"
-#  send "$DPASS\r"
-#  log_user 1
-#  expect eof
-#EOD)
-
-#  echo "Destination Date Matches:  $REMOTE_REGIONS"
-  
-#  remote_environment_cleanup     
-#  ps -u $USER_ID | grep -v sshd | grep ssh | cut -d' ' -f3 | xargs -I% kill %  #Close Tunnel
-
-#  exit
-#fi
 
 # Search point for destinations
 if [[ $DEST != 'empty' ]]; then
@@ -203,4 +130,4 @@ do
   echo "$CORREL_ID\n${SRC_FILE_NAME}\n$SRC_MSG\n$TOTAL\nDELIMITER"  
   TOTAL=''
 done
-`${CLEANUP[@]}`
+"${CLEANUP[@]}"
