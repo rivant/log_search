@@ -9,12 +9,15 @@ set eKey [lindex $argv 6]
 set Dest [lindex $argv 7]
 set Dest_Location [lindex $argv 8]
 set ePass [lindex $argv 9]
-set Script shell/matches.sh
 set timeout 3600
 set dPass [exec echo $ePass | openssl enc -aes-128-cbc -a -d -pass pass:$eKey]
 set try 0
 
-spawn -noecho ksh93 -c "ssh -o StrictHostKeyChecking=no $ID@$IP ksh93 -s < $Script $Source \"$Pattern\" $End_Time $Start_Time $eKey $Dest $Dest_Location $ePass 2>/dev/null"
+if { $Dest_Location == "empty" } {
+  spawn -noecho ksh93 -c "ssh -o StrictHostKeyChecking=no $ID@$IP ksh93 -s < shell/matches.sh $Source \"$Pattern\" $End_Time $Start_Time $eKey $Dest $Dest_Location $ePass 2>/dev/null"
+} else {
+  spawn -noecho ksh93 -c "ssh -o StrictHostKeyChecking=no $ID@$IP ksh93 -s < shell/remoteMatches.sh $Source \"$Pattern\" $End_Time $Start_Time $eKey $Dest $Dest_Location $ePass"
+}
 
 log_user 0
 
