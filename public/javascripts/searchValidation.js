@@ -55,6 +55,8 @@ function validateSearch(address, port) {
         document.getElementById('destAdapterLocation').value = (srcObj[sourceAdapter +'_'+ role] === dstObj[destAdapter +'_'+ role]) ? 
         'empty' : document.getElementById('userID').value +'_'+ dstObj[destAdapter +'_'+ role] +'_'+ randomPortNumber();
       }
+      
+      document.getElementById('serverRole').value = role;
 
       let searchForm = document.getElementsByClassName('search-form');
       for (let i = 0; i < searchForm.length; i++){ searchFor[searchForm.item(i).name] = searchForm.item(i).value; }
