@@ -92,12 +92,9 @@
 </body>
 
 <script>
-  $('#startDate').val(today());
-  $('#endDate').val(today());  
-    
-  $('#server_select').on('change', function(){    
-    $("input[name='userID']").focus();
-  });
+  document.getElementById('startDate').value = today();
+  document.getElementById('endDate').value = today();  
+  document.getElementById('server_select').addEventListener('change', function() { document.getElementById('userID').focus() });
 	 
   let srcArr = [];
   let dstArr = [];

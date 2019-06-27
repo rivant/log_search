@@ -39,8 +39,8 @@ if [[ $REMOTE != 'empty' ]]; then
   TUNNEL_IP=`echo $REMOTE | cut -d_ -f2`
   ACCESS=(ssh -S~/%r-ctrl-socket -qoStrictHostKeyChecking=no localhost -p$TUNNEL_PORT)
 
-  #Setup Tunnel
-  expect -c "spawn -noecho ssh -M -S~/%r-ctrl-socket -fNqo StrictHostKeyChecking=no -L $TUNNEL_PORT:localhost:22 $USER_ID@$TUNNEL_IP; log_user 0; expect \"eDir Password:\"; send \"$DPASS\r\"; set timeout 1; expect eof" & 
+  #Setup Tunnel with 10 minute timeout
+  expect -c "spawn -noecho ssh -M -S~/%r-ctrl-socket -o StreamLocalBindUnlink=yes -fqo StrictHostKeyChecking=no -L $TUNNEL_PORT:localhost:22 $USER_ID@$TUNNEL_IP \"sleep 600\"; log_user 0; expect \"eDir Password:\"; send \"$DPASS\r\"; set timeout 1; expect eof" & 
 
   #Callback for Tunnel connection with 10 second timeout.
   TIMER=0
@@ -63,13 +63,12 @@ if [[ $REMOTE != 'empty' ]]; then
   done
       
   if [[ -z $PORT_CHECK ]]; then
-    echo "The connection to the remote server did not complete.
-          Sometimes this happens in the world of server connections.
-          Please try the search again.  If the problem persists, double
-          check that you can log into the remote server manually."
+    echo "\tThe connection to the remote server did not complete.          
+        Please try the search again.  If the problem persists, double
+        check that you can log into the remote server manually."
     #Clean up any un-resolved connection remnants    
     ps -u $USER_ID | grep -v sshd | grep ssh | awk '{print $2}' | xargs -I% kill %
-    rm ~/${USER_ID}-ctrl-socket
+    rm ~/${USER_ID}-ctrl-socket 2>/dev/null
     exit
   fi
 

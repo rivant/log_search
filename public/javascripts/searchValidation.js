@@ -39,7 +39,7 @@ function validateSearch(address, port) {
     }    
   }
 
-  $('#submit').on('click', function(){
+  document.getElementById('submit').addEventListener('click', function() {
     if (validate.all()){
       let searchFor = {}      
       let ipAddress = document.getElementById('server_select').value;
@@ -79,11 +79,11 @@ function validateSearch(address, port) {
           fullMsg = partialMsg.substring(0, msgDelimiterIdx);
           partialMsg = partialMsg.substring(msgDelimiterIdx, partialMsg.length);
 
-          $(content.toHtml(fullMsg, searchFor.pattern.replace(/'/g, ''))).appendTo('#msgDisplay');
+          document.getElementById('msgDisplay').insertAdjacentHTML('beforeend', content.toHtml(fullMsg, searchFor.pattern.replace(/'/g, '')));
           document.getElementById('srcCount').innerHTML = content.srcMsgCount;
           document.getElementById('dstCount').innerHTML = content.dstMsgCount;
         } else if (!partialMsg.includes('MSH|')) {
-            $('<span style="color:red">'+ partialMsg +'</span>').appendTo('#msgDisplay');
+            document.getElementById('msgDisplay').insertAdjacentHTML('beforeend', '<span style="color:red">'+ partialMsg +'</span>');
         }
       }
 
