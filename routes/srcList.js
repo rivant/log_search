@@ -1,13 +1,13 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
 const glob = require('glob');
 const fs = require('fs');
 
 /* GET Source Adapters */
 router.get('/', function(req, res, next) {
-	var srcList = '';
+	let srcList = '';
 	
-	glob('./store/*.src.+(stage|uat|dev)', (err, files) => {
+	glob('./store/*.src.+(stage|uat|dev|prod)', (err, files) => {
 		files.forEach((file) => {
 			srcList += fs.readFileSync(file, 'utf8');
 		});
