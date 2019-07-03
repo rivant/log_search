@@ -43,7 +43,9 @@ content = {
     let msgArr = msgStack.split('DEST.log');
     let msg = /(MSH[\s\S]*)(\u001c\r|\u0003)/m;
     let timeStamp = /(MESSAGE PROCESSING[\w\s:-]*),/;
-    let ack = /INFO[\s\S]*(POSITIVE.*|NACK.*)/;
+    let msa = /INFO[\s\S]*(MSA\|A.*)/;
+    let ack = /INFO[\s\S]*(POSITIVE.*|NACK A.*)/;
+    let indicator = 'color:red';
     let fileNameDst = [];
 
     if (fileArr){
@@ -53,11 +55,19 @@ content = {
         if (msgArr[idx + 1].includes('dummy') === false && msg.test(msgArr[idx + 1])){
           if (timeStamp.test(msgArr[idx + 1])) {
             html += '<li style="color:blue">'+ timeStamp.exec(msgArr[idx + 1])[1] +'</li><ul>';
-          }          
-          html += '<li>'+ msg.exec(msgArr[idx + 1])[1] +'</li></ul>';
-          if (ack.test(msgArr[idx + 1])) {
-            html += '<li style="color:blue">'+ ack.exec(msgArr[idx + 1])[1] +'</li></ul><br>';
           }
+          
+          html += '<li>'+ msg.exec(msgArr[idx + 1])[1] +'</li></ul>';
+          
+          if (msa.test(msgArr[idx + 1]) && ack.test(msgArr[idx + 1])) {
+            if (msa.exec(msgArr[idx + 1])[1].includes('MSA|AA')) {
+              indicator = 'color:blue';
+            }
+            html += '<li style="'+ indicator +'">'+ msa.exec(msgArr[idx + 1])[1] +'</li>';
+            html += '<li style="'+ indicator +'">'+ ack.exec(msgArr[idx + 1])[1] +'</li>';
+          }
+
+          html += '</ul><br>';
         } else if (/dummy.*/.test(msgArr[idx + 1])) {
             html += '<ul><li>'+ /dummy.*/.exec(msgArr[idx + 1])[0] +'</li><br></ul></ul>';
         } else { html += '</ul></ul>'; }
