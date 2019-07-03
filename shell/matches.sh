@@ -102,23 +102,23 @@ do
   for DEST_NAME in $DEST_DATE_MATCHES
   do
     # Check for matching correlation Id's
-    ID_DEST_MATCHES_ARR=(`${SECURITY[@]} zgrep -n "Id $CORREL_ID" $DEST_NAME | cut -d: -f1`)
+    ID_DEST_MATCHES_ARR=(`${SECURITY[@]} zgrep -nE "the queue .*(\.DASTATE|\.DFDA) for correlation id $CORREL_ID" $DEST_NAME | cut -d: -f1`)
     ARR_LENGTH=`expr ${#ID_DEST_MATCHES_ARR[@]} - 1`
     ARR_COUNTER=0
-		if [[ $ARR_LENGTH -gt 20 ]]; then
-			continue
+    
+    # For messages that are stuck and keep repeating, just show the most current metadata + message
+		if [[ $ARR_LENGTH -gt 15 ]]; then
+      ARR_COUNTER=$ARR_LENGTH
 		fi				
 
     until [[ $ARR_COUNTER -gt $ARR_LENGTH ]]
     do
-      LINE_NUMBER=`expr ${ID_DEST_MATCHES_ARR[$ARR_COUNTER]} + 2`
+      LINE_NUMBER=`expr ${ID_DEST_MATCHES_ARR[$ARR_COUNTER]} + 1`
       LINE_GRAB=`${SECURITY[@]} zgrep -e "[:alnum::blank:]*" $DEST_NAME | sed -n "${LINE_NUMBER}p"`
 
       if [[ -n $ID_DEST_MATCHES_ARR ]]; then
         if [[ -z `echo $LINE_GRAB | grep dummy` ]]; then
-           #DEST_MSG_MATCH=`${SECURITY[@]} sed "$LINE_NUMBER,/.ACK A./!d" $DEST_NAME`
            DEST_MSG_MATCH=`${SECURITY[@]} zgrep -e "[:alnum::blank:]*" $DEST_NAME | sed "$LINE_NUMBER,/.ACK A./!d"`
-           #DEST_MSG_MATCH=`${SECURITY[@]} zgrep -e "[:alnum::blank:]*" $DEST_NAME | sed "$LINE_NUMBER,/MSH/!d"`
            TOTAL=$TOTAL"$DEST_NAME \n $DEST_MSG_MATCH \n"
         else
            TOTAL=$TOTAL"\n$DEST_NAME \n $LINE_GRAB\r\n"
