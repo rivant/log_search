@@ -16,7 +16,7 @@ set try 0
 if { $Dest_Location == "empty" } {
   spawn -noecho ksh93 -c "ssh -o StrictHostKeyChecking=no $ID@$IP ksh93 -s < shell/matches.sh $Source \"$Pattern\" $End_Time $Start_Time $eKey $Dest $Dest_Location $ePass 2>/dev/null"
 } else {
-  spawn -noecho ksh93 -c "ssh -o StrictHostKeyChecking=no $ID@$IP ksh93 -s < shell/remoteMatches.sh $Source \"$Pattern\" $End_Time $Start_Time $eKey $Dest $Dest_Location $ePass"
+  spawn -noecho ksh93 -c "ssh -o StrictHostKeyChecking=no $ID@$IP ksh93 -s < shell/remoteMatches.sh $Source \"$Pattern\" $End_Time $Start_Time $eKey $Dest $Dest_Location $ePass 2>/dev/null"
 }
 
 log_user 0
