@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <title>HL7 Message Search</title>
   <link rel="stylesheet" href="stylesheets/style.css">
+  <script type="text/javascript" src="javascripts/requests.js"></script>
   <script src="javascripts/autocomplete.js"></script>
   <script type="text/javascript" src="javascripts/content.js"></script>
 	<script type="text/javascript" src="javascripts/utils.js"></script>
@@ -94,43 +95,9 @@
   document.getElementById('startDate').value = today();
   document.getElementById('endDate').value = today();  
   document.getElementById('server_select').addEventListener('change', function() { document.getElementById('userID').focus() });
-	 
-  let srcArr = [];
-  let dstArr = [];
-	let srcObj = {};
-	let dstObj = {};
 
-  let xhrSrc = new XMLHttpRequest();
-  let xhrDst = new XMLHttpRequest();
-
-  xhrSrc.onreadystatechange = function(){
-    if (xhrSrc.readyState == 4 && xhrSrc.status == 200){
-      let lines = xhrSrc.responseText.split('\r\n');
-			lines.forEach((line) => {
-				let item = line.split(' ');
-				srcArr.push(item[0]);
-				srcObj[item[0] +'_'+ item[1]] = item[2];
-			});
-      autocomplete(document.getElementById('source'), uniqueArray(srcArr));
-    }
-  };
-  xhrDst.onreadystatechange = function(){
-    if (xhrDst.readyState == 4 && xhrDst.status == 200){
-			let lines = xhrDst.responseText.split('\r\n');
-			lines.forEach((line) => {
-				let item = line.split(' ');
-				dstArr.push(item[0]);
-				dstObj[item[0] +'_'+ item[1]] = item[2];
-			});
-			autocomplete(document.getElementById('dest'), uniqueArray(dstArr));
-    }
-  };
-  
-  xhrSrc.open("GET", "/srclist");
-  xhrSrc.send();
-  
-  xhrDst.open("GET", "/dstlist");
-  xhrDst.send();
+  autocomplete(document.getElementById('source'), uniqueArray(requested.sourceArray));
+	autocomplete(document.getElementById('dest'), uniqueArray(requested.destArray));
   
   let server = <%- JSON.stringify(comm) %>
   validateSearch(server.address, server.port)
