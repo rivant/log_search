@@ -52,8 +52,8 @@ function validateSearch(address, port) {
       if (destAdapter === ''){
         document.getElementById('destAdapterLocation').value = 'empty';
       } else {
-        document.getElementById('destAdapterLocation').value = (srcObj[sourceAdapter +'_'+ role] === dstObj[destAdapter +'_'+ role]) ? 
-        'empty' : document.getElementById('userID').value +'_'+ dstObj[destAdapter +'_'+ role] +'_'+ randomPortNumber();
+        document.getElementById('destAdapterLocation').value = (requested.sourceObject[sourceAdapter +'_'+ role] === requested.destObject[destAdapter +'_'+ role]) ? 
+        'empty' : document.getElementById('userID').value +'_'+ requested.destObject[destAdapter +'_'+ role] +'_'+ randomPortNumber();
       }
       
       document.getElementById('serverRole').value = role;
