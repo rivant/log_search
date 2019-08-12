@@ -7,7 +7,7 @@ function logSearch(ws, searchParams) {
 
   script.searchLogs(searchParams, (rawResultsStream) => {
     if (rawResultsStream) {
-      rawResultsStream.stdout.on('data', (msg) => {   
+      rawResultsStream.stdout.on('data', (msg) => {
         if (ws) {
           ws.send(msg.toString())
         }       
