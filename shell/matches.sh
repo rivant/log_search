@@ -45,19 +45,19 @@ if [[ $DEST != 'empty' ]]; then
    DEST_PATH="${ADAPTER_HOME}/REGION/$DEST_REGION_NAME/LOG"
    DEST_LOG="${DEST}_DEST.log"	 
 else
-	DOWNSTREAM=`${SECURITY[@]} cat ${ADAPTER_HOME}/REGION/$SRC_REGION_NAME/CONFIG/${SRC_REGION_NAME}Adapter.xml | sed "/${SOURCE}_SOURCE/,/<\/destinations>/!d" | grep '<destID>' | sed 's/.*>\([A-Z0-9-]*\)<.*/\1/'`	
+	DOWNSTREAM=`${SECURITY[@]} cat ${ADAPTER_HOME}/REGION/$SRC_REGION_NAME/CONFIG/${SRC_REGION_NAME}Adapter.xml | sed "/${SOURCE}_SOURCE/,/<\/destinations>/!d" | grep '<destID>' | sed 's/.*>\([A-Za-z0-9-]*\)<.*/\1/'`
 	if [[ -z $DOWNSTREAM ]]; then
 		echo Unable to find entry for ${SOURCE}_SOURCE in ${SRC_REGION_NAME}Adapter.xml to determine destinations.  Try specifying a destination.
 		exit 1
 	fi
-	NUM_CHECK=''
+	NAME_CHECK=''
 	for adapter in $DOWNSTREAM
 	do
 		DEST_REGION_NUM=`echo $adapter | sed $REGION_PATTERN`
-		DEST_REGION_NAME=`echo "$REGION_NAMES" | grep -E "[A-Z]$DEST_REGION_NUM$"`
+		DEST_REGION_NAME=`echo "$REGION_NAMES" | grep -E "^[A-Z]*$DEST_REGION_NUM$"`
 		
 		# Prevent storing duplicate regions and missing regions
-		if [[ -n `echo $NUM_CHECK | grep $DEST_REGION_NUM` ]] || [[ -z $DEST_REGION_NAME ]]; then
+		if [[ -n `echo $NAME_CHECK | grep ${DEST_REGION_NAME}` ]] || [[ -z $DEST_REGION_NAME ]]; then
 			continue
 		fi
 		
@@ -67,24 +67,26 @@ else
 			DEST_REGION_NAME=`echo $DEST_REGION_NAME | cut -d' ' -f $REGION_NAME_COUNT`
 		fi
 
-		NUM_CHECK="$NUM_CHECK $DEST_REGION_NUM"		
+		NAME_CHECK="$NAME_CHECK $DEST_REGION_NAME"		
 		DEST_PATH="$DEST_PATH ${ADAPTER_HOME}/REGION/$DEST_REGION_NAME/LOG"		
 	done
 	DEST_LOG="_DEST.log"
-fi 
+fi
 DEST_DATE_MATCHES=`${SECURITY[@]} find $DEST_PATH -type f -mtime +$END_TIME ! -mtime +$START_TIME | grep $DEST_LOG | sort -r`
 
 # Find $SOURCE files in date range.  Return file name and line number of $SEARCH
 # Filter out Ack Messages, and any search criteria outside of an hl7 message
 if [ `${SECURITY[@]} ls $SRC_PATH 2>/dev/null | wc -l` != 0 ]; then		
-  SRC_MATCHES=`${SECURITY[@]} find $SRC_PATH -type f -mtime +$END_TIME ! -mtime +$START_TIME | grep "${SOURCE}_SOURCE.log" | sort -r | xargs ${SECURITY[@]} zgrep -n "$SEARCH" /dev/null | grep -v "MSA|" | grep "MSH|" | cut -f1-2 -d:`
+  SRC_MATCHES=`${SECURITY[@]} find $SRC_PATH -type f -mtime +$END_TIME ! -mtime +$START_TIME | grep "${SOURCE}_SOURCE.log" | sort -r | xargs ${SECURITY[@]} zgrep -n "$SEARCH" /dev/null | grep -v "MSA|" | cut -f1-2 -d:`
 	
   if [[ -z $SRC_MATCHES ]]; then
     printf "Unable to find $SEARCH in $SOURCE Source Log Messages."
-    exit 1
+    "${CLEANUP[@]}"
+    exit 0
   fi
 else
   printf "Unable to find $SRC_PATH\n" 1>&2
+  "${CLEANUP[@]}"
   exit 1
 fi
 
@@ -95,8 +97,8 @@ do
   SRC_FILE_NAME=`echo $SRC_ENTRY | cut -d: -f1`
 
   # Get Message + metadata
-	#SRC_MSG=`${SECURITY[@]} zgrep "[[:alnum:]]*" $SRC_FILE_NAME | sed "${SRC_LINE_NUM},/RESPONSE/!d"`
-  SRC_MSG=`${SECURITY[@]} zgrep "[[:alnum:]]*" $SRC_FILE_NAME | sed "${SRC_LINE_NUM},/COREL ID/!d"`
+  #SRC_MSG=`${SECURITY[@]} zgrep "[[:alnum:]]*" $SRC_FILE_NAME | sed "${SRC_LINE_NUM},/COREL ID/!d"`
+  SRC_MSG=`${SECURITY[@]} zgrep "[[:alnum:]]*" $SRC_FILE_NAME | sed "${SRC_LINE_NUM},/MSA|/!d"`
   CORREL_ID=`echo $SRC_MSG | sed 's/.* COREL ID = \([A-Z0-9]*\) .*/\1/'`
 
   for DEST_NAME in $DEST_DATE_MATCHES
@@ -106,8 +108,8 @@ do
     ARR_LENGTH=`expr ${#ID_DEST_MATCHES_ARR[@]} - 1`
     ARR_COUNTER=0
     
-    # For messages that are stuck and keep repeating, just show the most current metadata + message
-		if [[ $ARR_LENGTH -gt 15 ]]; then
+    # For messages that are stuck and have numerous repeats, just show the most current metadata + message
+		if [[ $ARR_LENGTH -gt 20 ]]; then
       ARR_COUNTER=$ARR_LENGTH
 		fi				
 
