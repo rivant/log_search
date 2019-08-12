@@ -19,6 +19,11 @@ sudo_setup(){
   export SUDO_ASKPASS=~/.sudopass
   CLEANUP=(rm ~/.sudopass)
 }
+enviro_clean(){
+  ${ACCESS[@]} "${CLEANUP[@]}"
+  ps -u $USER_ID | grep -v sshd | grep ssh | awk '{print $2}' | xargs -I% kill %  #Close Tunnel
+  "${CLEANUP[@]}"
+}
 sudo_setup
 
 # Common variables
@@ -85,7 +90,8 @@ if [[ $REMOTE != 'empty' ]]; then
     
     if [[ -z $SRC_MATCHES ]]; then
       printf "Unable to find $SEARCH in $SOURCE Source Log Messages."
-      exit 1
+      enviro_clean
+      exit 0
     fi
   else
     printf "Unable to find $SRC_PATH\n" 1>&2
@@ -99,7 +105,7 @@ if [[ $REMOTE != 'empty' ]]; then
     SRC_FILE_NAME=`echo $SRC_ENTRY | cut -d: -f1`
 
     # Get Message + metadata
-    SRC_MSG=`${SECURITY[@]} zgrep "[[:alnum:]]*" $SRC_FILE_NAME | sed "${SRC_LINE_NUM},/COREL ID/!d"`
+    SRC_MSG=`${SECURITY[@]} zgrep "[[:alnum:]]*" $SRC_FILE_NAME | sed "${SRC_LINE_NUM},/MSA|/!d"`
     CORREL_ID=`echo $SRC_MSG | sed 's/.* COREL ID = \([A-Z0-9]*\) .*/\1/'`
 
     for DEST_NAME in $DEST_DATE_MATCHES
@@ -132,8 +138,5 @@ if [[ $REMOTE != 'empty' ]]; then
     TOTAL=''
   done
 
-  #Environment Cleanup
-  ${ACCESS[@]} "${CLEANUP[@]}"
-  ps -u $USER_ID | grep -v sshd | grep ssh | awk '{print $2}' | xargs -I% kill %  #Close Tunnel
-  "${CLEANUP[@]}"
+  enviro_clean
 fi
