@@ -91,6 +91,11 @@ h2 {
 .hide {
   visibility: hidden;
 }
+hr {
+  display: inline-block;
+  width: 32%;
+  height: 1px;
+}
 input {
    border-radius: 3px;
    height: 20px;
