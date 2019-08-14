@@ -15,26 +15,7 @@
   <h2>CXN Log Search</h2>
   
   <div style='display: inline-block' id='searchCriteria'>
-    <select id="server_select" class="search-form" name="serverIP">
-      <option value="10.248.202.25">UAT Server</option>
-      <option value="10.248.202.24">Dev Server</option>      
-      <option value="10.248.205.20">Stage 1 (AZNEV-B)</option>
-      <option value="10.248.204.20">Stage 2 (SACTO-D)</option>
-      <option value="10.248.203.20">Stage 3 (BAY-A)</option>
-      <option value="10.248.206.20">Stage 4 (LAWMIX-C)</option>
-      <option value="10.248.207.20">Stage 5 (SOCAL-E)</option>
-      <option value="10.248.208.20">Stage 6 (EHR-F)</option>
-      <option value="10.248.209.140">Stage 7 (CXNG)</option>
-      <option value="10.248.209.142">Stage 8 (CXNH)</option>
-      <option value="10.248.205.16">Prod (AZNEV)</option>
-      <option value="10.248.203.16">Prod (PBAY)</option>
-      <option value="10.248.206.16">Prod (LAWMIX)</option>
-			<option value="10.248.204.16">Prod (SACTO)</option>
-      <option value="10.248.207.16">Prod (SOCAL)</option>
-      <option value="10.248.208.16">Prod (EHR)</option>
-      <option value="10.248.209.12">Prod (CXNG)</option>
-      <option value="10.248.209.78">Prod (CXNH)</option>
-    </select>
+    <select id="server_select" class="search-form" name="serverIP"></select>
 
     <div id="credentials">
       <span class="cred_label">User ID</span>
@@ -93,13 +74,21 @@
 
 <script>
   document.getElementById('startDate').value = today();
-  document.getElementById('endDate').value = today();  
+  document.getElementById('endDate').value = today();
+  
+  const locations = <%- JSON.stringify(sites) %>
+  let serverList = document.getElementById('server_select').options;
+  locations.forEach(line => {
+    let entry = JSON.parse(line);
+    serverList.add(new Option(entry.text, entry.value));
+  });
+  
   document.getElementById('server_select').addEventListener('change', function() { document.getElementById('userID').focus() });
 
   autocomplete(document.getElementById('source'), uniqueArray(requested.sourceArray));
 	autocomplete(document.getElementById('dest'), uniqueArray(requested.destArray));
   
-  let server = <%- JSON.stringify(comm) %>
+  const server = <%- JSON.stringify(comm) %>
   validateSearch(server.address, server.port)
   
   let catchEnterList = document.getElementsByClassName('catch-enter');
