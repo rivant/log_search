@@ -5,7 +5,7 @@
   <title>HL7 Message Search</title>
   <link rel="stylesheet" href="stylesheets/style.css">
   <script type="text/javascript" src="javascripts/requests.js"></script>
-  <script src="javascripts/autocomplete.js"></script>
+  <script type="text/javascript" src="javascripts/autocomplete.js"></script>
   <script type="text/javascript" src="javascripts/content.js"></script>
 	<script type="text/javascript" src="javascripts/utils.js"></script>
   <script type="text/javascript" src="javascripts/searchValidation.js"></script>
@@ -52,11 +52,13 @@
   </div>
 
   <div id='reference-block'>
-    <h4 id='reference-title'>Adapter Naming References</h4>
-    <a href='https://apps.dignityhealth.org/connexionsupporttool/#!/reference/applications' target='_blank'>Apps</a><br/>
-    <a href='https://apps.dignityhealth.org/connexionsupporttool/#!/reference/regionList' target='_blank'>Regions</a><br/>
-    <label>Syntax: Application Name + Region Number + Message Type</label><br/>
-    <label>Example: Initiate + Sacramento + ADT and Scheduling = INI30MIX</label>
+    <h4 id='reference-title'>Adapter Name References</h4>
+    <a href='https://apps.dignityhealth.org/connexionsupporttool/#!/reference/applications' target='_blank' class='cst'>Apps</a><br/>
+    <a href='https://apps.dignityhealth.org/connexionsupporttool/#!/reference/facilities' target='_blank' class='cst'>Facilities</a><br/>
+    <a href='https://apps.dignityhealth.org/connexionsupporttool/#!/reference/regionList' target='_blank' class='cst'>Regions</a><br/>
+    <a href='https://apps.dignityhealth.org/connexionsupporttool/#!/reference/transactionTypeList/0' target='_blank' class='cst'>Message Types</a><br/>
+    <label class='cst'>Syntax: Application Name + Facility/Region Number + Message Type</label><br/>
+    <label class='cst'>Example: Initiate + Sacramento + ADT and Scheduling = INI30MIX</label>
   </div>
 
   <div id='loader' style='visibility:hidden'>
@@ -73,32 +75,42 @@
 </body>
 
 <script>
-  document.getElementById('startDate').value = today();
-  document.getElementById('endDate').value = today();
-  
+  const dateFields = document.getElementsByClassName('dates');
   const locations = <%- JSON.stringify(sites) %>
-  let serverList = document.getElementById('server_select').options;
+  const server = <%- JSON.stringify(comm) %>
+  const serverRole = parse(locations);
+  const serverList = document.getElementById('server_select').options;
+  const catchEnterList = document.getElementsByClassName('catch-enter');
+  const submitButton = document.getElementById('submit');
+  let srcAdapterObject = {};
+  let dstAdapterObject = {};
+  
+  getAdapterList('srclist', server.address, server.port).then(result => {
+    srcAdapterObject = result;
+    const namesArray = Object.keys(srcAdapterObject).map(key => key.replace(/_[a-z]*$/, ''));
+    autocomplete(document.getElementById('source'), namesArray.filter(duplicates));
+  });
+  getAdapterList('dstlist', server.address, server.port).then(result => {
+    dstAdapterObject = result;
+    const namesArray = Object.keys(dstAdapterObject).map(key => key.replace(/_[a-z]*$/, ''));
+    autocomplete(document.getElementById('dest'), namesArray.filter(duplicates));
+  });
+  
+  Object.values(dateFields).forEach(field => field.value = today(new Date()));
+
   locations.forEach(line => {
     let entry = JSON.parse(line);
     serverList.add(new Option(entry.text, entry.value));
   });
   
-  document.getElementById('server_select').addEventListener('change', function() { document.getElementById('userID').focus() });
+  document.getElementById('server_select').addEventListener('change', () => document.getElementById('userID').focus());
 
-  autocomplete(document.getElementById('source'), uniqueArray(requested.sourceArray));
-	autocomplete(document.getElementById('dest'), uniqueArray(requested.destArray));
-  
-  const server = <%- JSON.stringify(comm) %>
-  validateSearch(server.address, server.port)
-  
-  let catchEnterList = document.getElementsByClassName('catch-enter');
-  let submitButton = document.getElementById('submit');
-  for (let i = 0; i < catchEnterList.length; i++) {
-    catchEnterList.item(i).addEventListener('keyup', function(event){
-      if (event.key === 'Enter') {
-        submitButton.click();
-      }
+  validateSearch(server.address, server.port);
+
+  Object.values(catchEnterList).forEach(value => {
+    value.addEventListener('keyup', event => {
+      if (event.key === 'Enter') submitButton.click();
     });
-  }
+  });
 </script>
 </html>

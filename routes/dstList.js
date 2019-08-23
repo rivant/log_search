@@ -11,7 +11,7 @@ router.get('/', function(req, res, next) {
 		files.forEach((file) => {
 			dstList += fs.readFileSync(file, 'utf8');
 		});
-		res.send(dstList);
+		res.send('{'+ dstList.slice(0, -1) +'}');
 	});
 });
 

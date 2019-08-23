@@ -63,6 +63,9 @@ body {
    text-align: center;
    margin-right: 12px;
 }
+.cst {
+  margin-left: 10px;  
+}
 .dates {
    width: 145px;
    height: 20px;
@@ -138,6 +141,7 @@ li {
 }
 #reference-title {
 	color: #6683af;
+  height: 0;
 }
 .search-form {
    margin-bottom: 7px;

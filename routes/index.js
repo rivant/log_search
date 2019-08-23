@@ -9,8 +9,11 @@ const readLocations = readline.createInterface({
 });
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', {comm: res.connection.address(), sites: readLocations.history});
+router.get('/', function(req, res, next) {  
+  res.render('index', {
+    comm: res.connection.address(),
+    sites: readLocations.history,
+  });
 });
 
 module.exports = router;

@@ -6,11 +6,11 @@ const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 
-let index = require('./routes/index');
-let logSearch = require('./routes/logSearch');
-let	srcList = require('./routes/srcList');
-let dstList = require('./routes/dstList');
-let	adapterConfigData = require('./routes/adapterConfigData');
+const index = require('./routes/index');
+const logSearch = require('./routes/logSearch');
+const	srcList = require('./routes/srcList');
+const dstList = require('./routes/dstList');
+const	adapterConfig = require('./routes/adapterConfig');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -33,8 +33,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', index);
 app.use('/srclist', srcList);
 app.use('/dstlist', dstList);
-app.use('/adapterconfigdata', adapterConfigData);
-app.use('/logsearch', logSearch)
+app.use('/logsearch', logSearch);
+app.use('/adapterconfig', adapterConfig);
 
 // Removed Download feature
 	// /files/* is accessed via req.params[0]

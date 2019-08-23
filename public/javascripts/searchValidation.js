@@ -1,5 +1,5 @@
 function validateSearch(address, port) {
-  let validate = {
+  const validate = {
     requiredPass: true,
     datesPass: true,
     requiredSet: document.querySelectorAll('[required]'),
@@ -12,7 +12,7 @@ function validateSearch(address, port) {
     required: function() {
       this.requiredPass = true;
       this.requiredSet.forEach((key) => {
-        let element = document.getElementById(key.id)
+        const element = document.getElementById(key.id)
         if (key.value === ''){          
           element.classList.add('error-box')
           element.setAttribute('placeholder', 'Required Field')
@@ -24,8 +24,8 @@ function validateSearch(address, port) {
       })
     },
     dates: function() {
-      let start = new Date(this.startDate.value)
-      let end = new Date(document.getElementById('endDate').value)
+      const start = new Date(this.startDate.value)
+      const end = new Date(document.getElementById('endDate').value)
       this.datesPass = true
       
       if (start > end){
@@ -41,26 +41,26 @@ function validateSearch(address, port) {
 
   document.getElementById('submit').addEventListener('click', function() {
     if (validate.all()){
-      let searchFor = {}      
-      let ipAddress = document.getElementById('server_select').value;
-      let sourceAdapter = document.getElementById('source').value;
-      let destAdapter = document.getElementById('dest').value;
-      let role = serverRole[ipAddress];
-      let ws = new WebSocket('wss://' + address + ':' + port);
-      let indicator = document.getElementById('loader');
+      const ipAddress = document.getElementById('server_select').value;
+      const sourceAdapter = document.getElementById('source').value;
+      const destAdapter = document.getElementById('dest').value;
+      const role = serverRole[ipAddress];
+      const ws = new WebSocket('wss://' + address + ':' + port);
+      const indicator = document.getElementById('loader');
+      let searchFor = {};
 
       if (destAdapter === ''){
         document.getElementById('destAdapterLocation').value = 'empty';
       } else {
-        document.getElementById('destAdapterLocation').value = (requested.sourceObject[sourceAdapter +'_'+ role] === requested.destObject[destAdapter +'_'+ role]) ? 
-        'empty' : document.getElementById('userID').value +'_'+ requested.destObject[destAdapter +'_'+ role] +'_'+ randomPortNumber();
+        document.getElementById('destAdapterLocation').value = (srcAdapterObject[sourceAdapter +'_'+ role] === dstAdapterObject[destAdapter +'_'+ role]) ? 
+        'empty' : document.getElementById('userID').value +'_'+ dstAdapterObject[destAdapter +'_'+ role] +'_'+ randomPortNumber();
       }
       
       document.getElementById('serverRole').value = role;
 
-      let searchForm = document.getElementsByClassName('search-form');
+      const searchForm = document.getElementsByClassName('search-form');
       for (let i = 0; i < searchForm.length; i++){ searchFor[searchForm.item(i).name] = searchForm.item(i).value; }
-      let msgTotals = document.getElementsByClassName('totals');
+      const msgTotals = document.getElementsByClassName('totals');
       for (let i = 0; i < msgTotals.length; i++) { msgTotals.item(i).innerHTML = ''; }
       document.getElementById('msgDisplay').innerHTML = '';
 

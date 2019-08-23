@@ -1,2 +1,18 @@
-{"value": "IP_Adress", "text": "Name/Description"}
-(each location on separate line)
+{"value": "10.248.209.78", "text": "Prod CXNH"}
+{"value": "10.248.209.12", "text": "Prod CXNG"}
+{"value": "10.248.208.16", "text": "Prod EHR"}
+{"value": "10.248.207.16", "text": "Prod SOCAL"}
+{"value": "10.248.204.16", "text": "Prod SACTO"}
+{"value": "10.248.206.16", "text": "Prod LAWMIX"}
+{"value": "10.248.203.16", "text": "Prod PBAY"}
+{"value": "10.248.205.16", "text": "Prod AZNEV"}
+{"value": "10.248.209.142", "text": "Stage CXNH"}
+{"value": "10.248.209.140", "text": "Stage CXNG"}
+{"value": "10.248.208.20", "text": "Stage EHR-F"}
+{"value": "10.248.207.20", "text": "Stage SOCAL-E"}
+{"value": "10.248.206.20", "text": "Stage LAWMIX-C"}
+{"value": "10.248.203.20", "text": "Stage BAY-A"}
+{"value": "10.248.204.20", "text": "Stage SACTO-D"}
+{"value": "10.248.205.20", "text": "Stage AZNEV-B"}
+{"value": "10.248.202.24", "text": "DEV"}
+{"value": "10.248.202.25", "text": "UAT"}
