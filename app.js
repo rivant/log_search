@@ -10,7 +10,6 @@ const index = require('./routes/index');
 const logSearch = require('./routes/logSearch');
 const	srcList = require('./routes/srcList');
 const dstList = require('./routes/dstList');
-const	adapterConfig = require('./routes/adapterConfig');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -34,7 +33,6 @@ app.use('/', index);
 app.use('/srclist', srcList);
 app.use('/dstlist', dstList);
 app.use('/logsearch', logSearch);
-app.use('/adapterconfig', adapterConfig);
 
 // Removed Download feature
 	// /files/* is accessed via req.params[0]

@@ -1,9 +1,10 @@
 {
-  "name": "correl",
+  "name": "Log Search",
   "version": "0.2.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node ./bin/www",
+    "test": "jasmine"
   },
   "dependencies": {
     "body-parser": "^1.19.0",
@@ -21,8 +22,5 @@
   },
   "devDependencies": {
     "jasmine": "^3.4.0"
-  },
-  "scripts": {
-    "test": "jasmine"
   }
 }
