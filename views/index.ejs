@@ -21,7 +21,7 @@
       <span class="cred_label">User ID</span>
       <input class="cred_input search-form" id="userID" type="text" name="userID" maxLength="30" required />
       <span class="cred_label">Password</span>
-      <input class="cred_input search-form" id="userPass" type="password" name="userPass" maxLength="40" required />
+      <input class="cred_input search-form" id="userPass" type="password" name="userPass" maxLength="70" required />
     </div>
     <br/>
     
@@ -78,6 +78,8 @@
   const dateFields = document.getElementsByClassName('dates');
   const locations = <%- JSON.stringify(sites) %>
   const server = <%- JSON.stringify(comm) %>
+  server.address = (<%- JSON.stringify(dns) %> || server.address);
+  
   const serverRole = parse(locations);
   const serverList = document.getElementById('server_select').options;
   const catchEnterList = document.getElementsByClassName('catch-enter');

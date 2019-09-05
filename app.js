@@ -45,7 +45,7 @@ app.use('/logsearch', logSearch);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
-  var err = new Error('Not Found');
+  let err = new Error('Not Found');
   err.status = 404;
   next(err);
 });
@@ -58,8 +58,8 @@ app.use(function(err, req, res, next) {
 
   // render the error
    if (err){
-      res.status(msg.status || 500);
-      res.render('error');
+      res.status(500);
+      res.render(err);
    }
 });
 

@@ -22,13 +22,13 @@ if { $Dest_Location == "empty" } {
 log_user 0
 
 expect {
-	"Password:" {
+	-re ".*Password:" {
 		if { $try == 1 } {
 			send_user " Unable to login, invalid username or password\n"
 			exit 1
 		}
 		
-		send "$dPass\r"
+		send "$dPass\r\n"
 		incr try
 		log_user 1
 		exp_continue
