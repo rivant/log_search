@@ -47,7 +47,7 @@ if [[ $DEST != 'empty' ]]; then
 else
 	DOWNSTREAM=`${SECURITY[@]} cat ${ADAPTER_HOME}/REGION/$SRC_REGION_NAME/CONFIG/${SRC_REGION_NAME}Adapter.xml | sed "/${SOURCE}_SOURCE/,/<\/destinations>/!d" | grep '<destID>' | sed 's/.*>\([A-Za-z0-9-]*\)<.*/\1/'`
 	if [[ -z $DOWNSTREAM ]]; then
-		echo Unable to find entry for ${SOURCE}_SOURCE in ${SRC_REGION_NAME}Adapter.xml to determine destinations.  Try specifying a destination.
+		echo Unable to find entry for ${SOURCE}_SOURCE in ${SRC_REGION_NAME}Adapter.xml to determine destinations.  Double check the correct server has been selected, or try specifying a destination.
 		exit 1
 	fi
 	NAME_CHECK=''
@@ -77,7 +77,7 @@ DEST_DATE_MATCHES=`${SECURITY[@]} find $DEST_PATH -type f -mtime +$END_TIME ! -m
 # Find $SOURCE files in date range.  Return file name and line number of $SEARCH
 # Filter out Ack Messages, and any search criteria outside of an hl7 message
 if [ `${SECURITY[@]} ls $SRC_PATH 2>/dev/null | wc -l` != 0 ]; then		
-  SRC_MATCHES=`${SECURITY[@]} find $SRC_PATH -type f -mtime +$END_TIME ! -mtime +$START_TIME | grep "${SOURCE}_SOURCE.log" | sort -r | xargs ${SECURITY[@]} zgrep -n "$SEARCH" /dev/null | grep -v "MSA|" | cut -f1-2 -d:`
+  SRC_MATCHES=`${SECURITY[@]} find $SRC_PATH -type f -mtime +$END_TIME ! -mtime +$START_TIME | grep "${SOURCE}_SOURCE.log" | sort -r | xargs ${SECURITY[@]} zgrep -n "$SEARCH" /dev/null | grep -vE "(MSA\||defaultNak)" | cut -f1-2 -d:`
 	
   if [[ -z $SRC_MATCHES ]]; then
     printf "Unable to find $SEARCH in $SOURCE Source Log Messages."
