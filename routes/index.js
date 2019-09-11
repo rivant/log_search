@@ -3,7 +3,7 @@ const router = express.Router();
 const readline = require('readline');
 const fs = require('fs');
 const readLocations = readline.createInterface({
-    input: fs.createReadStream('./store/location_config.json'),
+    input: fs.createReadStream('./config/search_locations.json'),
     output: process.stdout,
     terminal: true
 });
