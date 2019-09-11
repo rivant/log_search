@@ -19,3 +19,6 @@
 # Ignore node_modules
 # Update from package.json, run: npm install 
 /node_modules
+
+# Ignore storage files.  Auto generated from app.
+/store
