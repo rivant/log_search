@@ -22,3 +22,6 @@
 
 # Ignore storage files.  Auto generated from app.
 /store
+
+# Ignore config files.  Setup per location, No default setup.
+/config
