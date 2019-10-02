@@ -25,7 +25,7 @@ if [[ `uname -n` != phxc* ]]; then
   }
   sudo_setup
 else
-	sudo -u \#800 -i "SECURITY=$SECURITY" "SOURCE=$SOURCE" "SEARCH=$SEARCH" "END_TIME=$END_TIME" "START_TIME=$START_TIME" "DEST=$DEST"
+	sudo -u \#800 -i "SECURITY=$SECURITY" "SOURCE=$SOURCE" "SEARCH=$SEARCH" "END_TIME=$END_TIME" "START_TIME=$START_TIME" "DEST=$DEST" 2>/dev/null
 fi
 
 # Common variables
