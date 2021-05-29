@@ -18,7 +18,7 @@
     "npm": "^6.10.3",
     "npm-check-updates": "^3.1.21",
     "serve-favicon": "^2.5.0",
-    "ws": "^7.1.1"
+    "ws": "^7.4.6"
   },
   "devDependencies": {
     "jasmine": "^3.4.0"
