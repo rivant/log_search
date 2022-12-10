@@ -11,7 +11,7 @@
     "cookie-parser": "^1.4.4",
     "debug": "~2.6.0",
     "ejs": "^2.5.9",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "forever": "^1.0.0",
     "glob": "^7.1.4",
     "morgan": "^1.9.1",
